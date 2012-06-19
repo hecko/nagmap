@@ -1,0 +1,39 @@
+0.10 @ 6th of Feb 2012
+  tommy@sectra.com:
+    - set higher z-index for red and yellow markers
+    - added refresh (index page refreshes every 300 seconds)
+    - added POC to monitor services
+  marcel@blava.net:
+    - nagios configuration can be stored in multiple files of one folder - NagMap now reads nagios.cfg file!
+    - reviewed call.php script
+    - fixed problems with displaying maps when host had whitespace in name (thanks for bugreport goes to Nick Dawson)
+
+0.9 @ 9th of Aug 2011 - marcel@blava.net
+fixed some trivial, stupid bugs and made more compatible with SuSE and RHEL
+
+0.8 @ 27.Apr.2011 @ marcel@blava.net
+added support for non-standard formats of hosts files
+
+0.7 @ 26.Apr.2011 @ marcel@blava.net
+Application ported to Google Maps APIv3
+Google Maps API key is NO LONGER REQUIRED
+
+v0.5 marcel@blava.net
+NagMap now calls home for version information
+cong.php isolates conguration information from other source code
+
+v0.4 by marcel@blava.net
+ofully working public version
+
+03_may_2010 by marcel@blava.net
+code is now cleaner and more compatible with non-standard installations
+in the meantime the project has been integrated into several third-party products, how attering :)
+
+23_aug_2009 by marcel@shmu.org.uk
+almost completely rewritten core parser
+now supports bubbles
+links to Nagios info pages and topology maps
+supports icons according to the host template
+
+21_aug_2009 by marcel@shmu.org.uk
+initial release for connectedmiddlefield.org project

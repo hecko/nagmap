@@ -1,0 +1,24 @@
+Intro
+=====
+Now uses Google Maps API v3
+
+NagMap project is an initiative to create super-simple application to integrate Nagios with Google
+maps. The integration aims to visualize current status of network devices on aerial photography
+images. It also aims to give administrator basic information on devices to do further investigation of their
+status, such as links to MRTG and Smokeping pages of respected devices.
+So far the application only contains about 150 lines of PHP code. That is much less than this
+documentation, which we are very proud of.
+
+NagMap calls Home!
+==================
+NagMap calls home (our development server) every time it is used (index.php is called
+on your installation)! This is only and only for developers to know which versions of
+NagMap are being used worldwide and especially for you to know whether there is a
+new version of NagMap available! No other data are being stored ANYWHERE and
+are not mined for any information.
+
+If you want to disable the calling script please change the line in index.php:
+include('./call.php');
+to
+# include('./call.php');
+The calling script will be completely disabled.
