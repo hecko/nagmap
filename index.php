@@ -2,7 +2,7 @@
 $page = $_SERVER['PHP_SELF'];
 $sec = "300"; 
 header("Refresh: $sec; url=$page");
-$nagmap_version = '0.10';
+$nagmap_version = '0.11';
 include('./config.php');
 include('./call.php');
 ?>

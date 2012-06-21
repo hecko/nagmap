@@ -33,7 +33,9 @@ foreach ($raw_data as $file) {
       $pieces = explode(" ", $line, 2);
       $option = trim($pieces[0]);
       $value = trim($pieces[1]);
-      $data[$i][$option] = $value;
+      //remove comments from this line
+      $value_comm = explode(';', $value);
+      $data[$i][$option] = $value_comm[0];
     }
   }
  }
@@ -50,7 +52,8 @@ foreach ($data as $host) {
   $hostname = str_replace('(','_',$hostname);
   $hostname = str_replace(')','_',$hostname);
   $hostname = str_replace(' ','_',$hostname);
-  if ($hostname == '') {
+  //if hostname is not defined or hostname starts with exclamation mark, ignore this host
+  if (($hostname == '') OR (ereg("^\\!", $hostname)) ) {
     continue;
   };
   $hostname = "x".$hostname."x";
@@ -63,20 +66,28 @@ foreach ($data as $host) {
       $value = str_replace('/','_',$value);
       $value = str_replace('(','_',$value);
       $value = str_replace(')','_',$value);
-      $value = str_replace(' ','_',$value);
-      $value = "x".$value."x";
+      $parents = explode(',', $value); 
+      $value = array();
+      foreach ($parents as $parent) {
+        $parent = trim($parent);
+        $parent = str_replace(' ','_',$parent);
+        $value[] = "x".$parent."x";
+      }
     }
     if (($option == "notes") && (ereg("latlng",$value))) { 
       $value = explode(":",$value); 
       $value = $value[1];
+      $value = trim($value);
       $option = "latlng";
     };
     if (($option != "latlng") && ($option != "nagios_host_name") && (ereg("-",$value))) {
       $value = str_replace('-','_',$value);
       $value = str_replace('.','_',$value);
+      $value = trim($value);
     };
     $hosts[$hostname]["nagios_host_name"] = $nagios_host_name;
     $hosts[$hostname][$option] = $value;
+    unset($parent, $parents);
   };
 };
 
@@ -146,8 +157,8 @@ foreach ($hosts as $h) {
     };
     //generate google maps info bubble
     $info = '<div class=\"bubble\"><b>'.$h["nagios_host_name"]."</b><br>Type: ".$h["use"]
-         .'<br>Address: '.$h["address"]
-         .'<br>Parents: '.$h["parents"]
+         .'<br>Address:'.$h["address"]
+         .'<br>Number of parents:'.count($h["parents"]).','
          .'<br>Host status: '.$s[$h["nagios_host_name"]]["hoststatus"]["last_hard_state"]
          .'<br>Services status: '.$s[$h["nagios_host_name"]]["servicestatus"]["last_hard_state"]
          .'<br>Combined / NagMap status: '.$s[$h["nagios_host_name"]]['status'].' : '.$s[$h["nagios_host_name"]]['status_human']
@@ -177,14 +188,23 @@ foreach ($hosts as $h) {
 };
 
 //create parent connection links
+$javascript .= '//generating links between hosts';
 foreach ($hosts as $h) {
-  if ((isset($h["parents"]) AND (isset($h["latlng"])) AND (isset($hosts[$h["parents"]]["latlng"])))) {
-    $javascript .= ("\nvar ".$h["host_name"].'_to_'.$h["parents"]." = new google.maps.Polyline({\n".
-      "  path: [".$h["host_name"].'_pos,'.$h["parents"]."_pos],\n".
-      "  strokeColor: \"#ADDFFF\",\n".
-      "  strokeOpacity: 0.9,\n".
-      "  strokeWeight: 2});\n");
-    $javascript .= ($h["host_name"].'_to_'.$h["parents"].".setMap(map);\n\n");
+  if (isset($h["latlng"]) AND (is_array($h["parents"]))) {
+    foreach ($h["parents"] as $parent) {
+      if (isset($hosts[$parent]["latlng"])) {
+        $stroke_color = "#ADDFFF";
+        if ($s[$h["nagios_host_name"]]['status'] == 1) { $stroke_color ='#ffff00'; }
+        if ($s[$h["nagios_host_name"]]['status'] == 2) { $stroke_color ='#ff0000'; }
+
+        $javascript .= ("\nvar ".$h["host_name"].'_to_'.$parent." = new google.maps.Polyline({\n".
+          "  path: [".$h["host_name"].'_pos,'.$parent."_pos],\n".
+          "  strokeColor: \"$stroke_color\",\n".
+          "  strokeOpacity: 0.9,\n".
+          "  strokeWeight: 2});\n");
+        $javascript .= ($h["host_name"].'_to_'.$parent.".setMap(map);\n\n");
+      };
+    };
   };
 };
 

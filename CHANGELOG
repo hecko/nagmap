@@ -1,8 +1,15 @@
+0.11 @ 22nd of Jun 2012
+  marcel@blava.net
+    - added config-proofing for nagios object config files (thanks to fernando.henrique@nec.com.br)
+    - fixed issues with exclamation marks in hostnames - now such hostnames are ignored (thanks to nicolas.ord@gmail.com)
+    - now we finally suppot multiple parents! (thanks for inspiration from Peter.Groselj@telekom.si)
+  Benjamin.Weiss@osbi.ok.gov
+    - added color-changing links to hosts if host is not reachable / down
 0.10 @ 21st of Jun 2012
   tommy@sectra.com:
     - set higher z-index for red and yellow markers
     - added refresh (index page refreshes every 300 seconds)
-    - added POC to monitor services
+    - added proof-of-concept code to monitor services
   marcel@blava.net:
     - nagios configuration can be stored in multiple files of one folder - NagMap now reads nagios.cfg file!
     - reviewed call.php script
@@ -22,14 +29,14 @@ Google Maps API key is NO LONGER REQUIRED
 
 v0.5 marcel@blava.net
 NagMap now calls home for version information
-cong.php isolates conguration information from other source code
+config.php isolates configuration information from other source code
 
 v0.4 by marcel@blava.net
 ofully working public version
 
 03_may_2010 by marcel@blava.net
 code is now cleaner and more compatible with non-standard installations
-in the meantime the project has been integrated into several third-party products, how attering :)
+in the meantime the project has been integrated into several third-party products
 
 23_aug_2009 by marcel@shmu.org.uk
 almost completely rewritten core parser

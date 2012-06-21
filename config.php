@@ -4,7 +4,7 @@ $nagios_cfg_file = "/usr/local/nagios/etc/nagios.cfg";
 $nagios_status_dat_file = "/usr/local/nagios/var/status.dat";
 
 $nagmap_map_centre = '57.1633,-2.127';
-$nagmap_map_zoom = 15;
+$nagmap_map_zoom = 14;
 $nagmap_bubble_links = 0;
 
 ###do not edit below unless you know what you are doing
