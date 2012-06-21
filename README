@@ -1,13 +1,16 @@
 Intro
 =====
-Now uses Google Maps API v3
+Uses Google Maps API v3
 
 NagMap project is an initiative to create super-simple application to integrate Nagios with Google
 maps. The integration aims to visualize current status of network devices on aerial photography
 images. It also aims to give administrator basic information on devices to do further investigation of their
 status, such as links to MRTG and Smokeping pages of respected devices.
-So far the application only contains about 150 lines of PHP code. That is much less than this
-documentation, which we are very proud of.
+
+If you xperience any problems deploying NagMap please send an email to maco@blava.net - I will do my best
+to assist you or to add new features into NagMap. 
+
+Nagmap is now hosted on github.com
 
 NagMap calls Home!
 ==================
