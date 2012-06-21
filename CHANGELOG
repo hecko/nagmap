@@ -1,4 +1,4 @@
-0.10 @ 6th of Feb 2012
+0.10 @ 21st of Jun 2012
   tommy@sectra.com:
     - set higher z-index for red and yellow markers
     - added refresh (index page refreshes every 300 seconds)
@@ -7,6 +7,8 @@
     - nagios configuration can be stored in multiple files of one folder - NagMap now reads nagios.cfg file!
     - reviewed call.php script
     - fixed problems with displaying maps when host had whitespace in name (thanks for bugreport goes to Nick Dawson)
+    - added informational message if NagMaps fails to display anything
+    - changed link color to light blue instead of red
 
 0.9 @ 9th of Aug 2011 - marcel@blava.net
 fixed some trivial, stupid bugs and made more compatible with SuSE and RHEL

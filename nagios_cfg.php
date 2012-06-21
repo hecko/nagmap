@@ -1,6 +1,7 @@
 <?php
 
 function get_config_files() {
+  global $info_msg;
   include('config.php');
   $cfg_raw = file($nagios_cfg_file);
 
@@ -23,6 +24,7 @@ function get_config_files() {
     }
   }
   $file_list = array_unique($files);
+  $info_msg['config_files'] = $file_list; 
   return $file_list;
 }
 

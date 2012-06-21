@@ -5,4 +5,8 @@
   font-size: 10pt;
 }
 
+h3 {
+  font-family: arial;
+}
+
 </style>

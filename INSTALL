@@ -2,7 +2,7 @@ Nagios Configuration
 ====================
 The 'notes' field for host definition in Nagios needs to match the following example:
   latlng: 66.174082,-13.119136
-If you are editing Nagios configuration files by hand this is how the notes line should look like:
+If you are editing Nagios configuration files by hand this is how the FULL notes line should look like:
   notes latlng: 66.174082,-13.119136
 You can get the precise coordinates from Google Maps (http://maps.google.com) - right click on 
 the spot where your device is located and select option "What's here?". The coordinates will be set 
@@ -25,7 +25,6 @@ Your webserver (e.g. Apache) needs to have PHP support enabled!
 3) Open the website of nagmap installation (e.g. open Firefox - point to http://www.youwebserver.org/nagmap )
 
 When nothing works open the source code of the website (Ctrl-U in Firefox) and send to maco@blava.net for support :) 
-(you can also open http://www.youwebserver.org/nagmap/marker.php through browser and you will find out whether at least the php scripts parses the config files correctly)
 
 Support
 =======

@@ -14,6 +14,7 @@ include('./call.php');
     <?php include("style.php"); ?>
     <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
     <script type="text/javascript">
+    //static code from index.pnp
     function initialize() {
         var myOptions = {
           zoom: <?php echo ("$nagmap_map_zoom"); ?>, 
@@ -47,15 +48,26 @@ var grey_blank = new google.maps.MarkerImage(
   new google.maps.Size(20,34),
   new google.maps.Point(10,34));
 
-<?php include("marker.php"); ?>
+//generating dynamic code from here...
+<?php 
+  include('marker.php');
+  if ($javascript != "") { 
+    echo $javascript; 
+    echo '};';
+    echo '
+      </script>
+      </head>
+      <body style="margin:0px; padding:0px;" onload="initialize()">
+        <div id="map_canvas" style="width:100%; height:100%"></div>
+      </body>
+    ';
+  } else {
+    echo '};';
+    echo '</script><head><body>';
+    echo "<br><h3>There is no data to display. You either did not set NagMap properly or there is a software bug. Please contact maco@blava.net for free assistance.</h3></body>";
+  }
 
-};
+?>
 
-    </script>
-  </head>
-
-  <body style="margin:0px; padding:0px;" onload="initialize()">
-    <div id="map_canvas" style="width:100%; height:100%"></div>
-  </body>
 </html>
 
