@@ -1,7 +1,6 @@
 <?php
 
 function get_config_files() {
-  global $info_msg;
   include('config.php');
   $cfg_raw = file($nagios_cfg_file);
 
@@ -11,10 +10,12 @@ function get_config_files() {
     $line = trim($line);
     if (eregi("^cfg_file",$line)) {
       $file = explode('=',$line,2);
+      $file[1] = trim($file[1]);
       $files[] = $file[1];
       unset($file);
     } elseif (eregi("^cfg_dir",$line)) {
       $dir = explode('=',$line,2);
+      $dir[1] = trim($dir[1]);
       $dir_handle = opendir($dir[1]);
       while (false !== ($file = readdir($dir_handle))) {
         if (ereg(".cfg$",$file)) {
@@ -24,7 +25,6 @@ function get_config_files() {
     }
   }
   $file_list = array_unique($files);
-  $info_msg['config_files'] = $file_list; 
   return $file_list;
 }
 

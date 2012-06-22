@@ -3,9 +3,11 @@
 include('nagios_cfg.php');
 
 $files = get_config_files();
+$info_msg["path_files_to_read"] = $files;
 
 foreach ($files as $file) {
-  $raw_data[$file] = file($cfg_dir.'/'.$file);
+  #$raw_data[$file] = file($cfg_dir.'/'.$file);
+  $raw_data[$file] = file($file);
 }
 
 $comment = ";";
@@ -24,7 +26,6 @@ foreach ($raw_data as $file) {
     if ((ereg("^define host{", $line)) OR (ereg("^define host {", $line))) {
       //starting a new host definition
       $i++;
-//      $host[$i] = $i;
     } elseif (!ereg("}",$line)) {
       $line = trim($line);
       //exchange tabs 
@@ -187,7 +188,7 @@ foreach ($hosts as $h) {
   };
 };
 
-//create parent connection links
+//create (multiple) parent connection links
 $javascript .= '//generating links between hosts';
 foreach ($hosts as $h) {
   if (isset($h["latlng"]) AND (is_array($h["parents"]))) {
