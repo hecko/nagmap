@@ -3,6 +3,7 @@
     - added config-proofing for nagios object config files (thanks to fernando.henrique@nec.com.br)
     - fixed issues with exclamation marks in hostnames - now such hostnames are ignored (thanks to nicolas.ord@gmail.com)
     - now we finally suppot multiple parents! (thanks for inspiration from Peter.Groselj@telekom.si)
+    - fixed issue where hosts have no parents (thanks to oleg@loco.com.ua)
   Benjamin.Weiss@osbi.ok.gov
     - added color-changing links to hosts if host is not reachable / down
 0.10 @ 21st of Jun 2012

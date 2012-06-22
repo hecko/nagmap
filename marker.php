@@ -191,7 +191,7 @@ foreach ($hosts as $h) {
 };
 
 //create (multiple) parent connection links
-$javascript .= '//generating links between hosts';
+$javascript .= "//generating links between hosts\n";
 foreach ($hosts as $h) {
   if (isset($h["latlng"]) AND (is_array($h["parents"]))) {
     foreach ($h["parents"] as $parent) {
