@@ -27,10 +27,12 @@ foreach ($raw_data as $file) {
       //starting a new host definition
       $i++;
     } elseif (!ereg("}",$line)) {
+      //remove pre-text and after-text empty spaces
       $line = trim($line);
-      //exchange tabs 
+      //exchange tabs for whitespaces 
       $line = preg_replace('/\t+/', ' ', $line);
       $line = preg_replace('/\s+/', ' ', $line);
+      //split line to options and values
       $pieces = explode(" ", $line, 2);
       $option = trim($pieces[0]);
       $value = trim($pieces[1]);
@@ -53,7 +55,7 @@ foreach ($data as $host) {
   $hostname = str_replace('(','_',$hostname);
   $hostname = str_replace(')','_',$hostname);
   $hostname = str_replace(' ','_',$hostname);
-  //if hostname is not defined or hostname starts with exclamation mark, ignore this host
+  //if hostname is empty or hostname starts with exclamation mark, ignore this host
   if (($hostname == '') OR (ereg("^\\!", $hostname)) ) {
     continue;
   };
