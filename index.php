@@ -2,12 +2,13 @@
 $page = $_SERVER['PHP_SELF'];
 $sec = "300"; 
 header("Refresh: $sec; url=$page");
-$nagmap_version = '0.11';
+$nagmap_version = '0.12';
 include('./config.php');
 include('./call.php');
 ?>
 <html>
   <head>
+    <link rel="shortcut icon" href="favicon.ico" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>NagMap <?php echo $nagmap_version ?></title>
@@ -16,37 +17,37 @@ include('./call.php');
     <script type="text/javascript">
     //static code from index.pnp
     function initialize() {
-        var myOptions = {
-          zoom: <?php echo ("$nagmap_map_zoom"); ?>, 
-          center: new google.maps.LatLng(<?php echo ("$nagmap_map_centre"); ?>),
-          mapTypeId: google.maps.MapTypeId.HYBRID
-        };
-        var map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
+      var myOptions = {
+        zoom: <?php echo ("$nagmap_map_zoom"); ?>, 
+        center: new google.maps.LatLng(<?php echo ("$nagmap_map_centre"); ?>),
+        mapTypeId: google.maps.MapTypeId.HYBRID
+      };
+      var map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
 	
-var red_blank = new google.maps.MarkerImage(
-  'http://www.google.com/mapfiles/marker.png', 
-  new google.maps.Size(20,34), 
-  new google.maps.Point(10,34));
+      var red_blank = new google.maps.MarkerImage(
+        'http://www.google.com/mapfiles/marker.png', 
+        new google.maps.Size(20,34), 
+        new google.maps.Point(10,34));
 
-var blue_blank = new google.maps.MarkerImage(
-  'http://www.google.com/mapfiles/marker_white.png',
-  new google.maps.Size(20,34),
-  new google.maps.Point(10,34));
+      var blue_blank = new google.maps.MarkerImage(
+        'http://www.google.com/mapfiles/marker_white.png',
+        new google.maps.Size(20,34),
+        new google.maps.Point(10,34));
 
-var green_blank = new google.maps.MarkerImage(
-  'http://www.google.com/mapfiles/marker_green.png',
-  new google.maps.Size(20,34),
-  new google.maps.Point(10,34));
+      var green_blank = new google.maps.MarkerImage(
+        'http://www.google.com/mapfiles/marker_green.png',
+        new google.maps.Size(20,34),
+        new google.maps.Point(10,34));
 
-var yellow_blank = new google.maps.MarkerImage(
-  'http://www.google.com/mapfiles/marker_yellow.png',
-  new google.maps.Size(20,34),
-  new google.maps.Point(10,34));
+      var yellow_blank = new google.maps.MarkerImage(
+        'http://www.google.com/mapfiles/marker_yellow.png',
+        new google.maps.Size(20,34),
+        new google.maps.Point(10,34));
 
-var grey_blank = new google.maps.MarkerImage(
-  'http://www.google.com/mapfiles/marker_grey.png',
-  new google.maps.Size(20,34),
-  new google.maps.Point(10,34));
+      var grey_blank = new google.maps.MarkerImage(
+        'http://www.google.com/mapfiles/marker_grey.png',
+        new google.maps.Size(20,34),
+        new google.maps.Point(10,34));
 
 //generating dynamic code from here...
 <?php 

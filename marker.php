@@ -6,34 +6,36 @@ $files = get_config_files();
 $info_msg["path_files_to_read"] = $files;
 
 foreach ($files as $file) {
-  #$raw_data[$file] = file($cfg_dir.'/'.$file);
   $raw_data[$file] = file($file);
 }
 
-$comment = ";";
-$comment2 = "#";
-
 include("status.php");
+
+//define variables so the E_NOTICES do not show in webserver logs
+$javascript = "";
 
 $s = nagmap_status();
 $info_msg['status'] = $s;
- 
+
+$i=0; 
 foreach ($raw_data as $file) {
  foreach ($file as $line) {
   //remove blank spaces
   $line = trim($line);
-  if ($line && !ereg("^$comment", $line) && !ereg("^$comment2", $line)) {
+  if ($line && !ereg("^;", $line) && !ereg("^#", $line)) {
     if ((ereg("^define host{", $line)) OR (ereg("^define host {", $line))) {
       //starting a new host definition
       $i++;
     } elseif (!ereg("}",$line)) {
       //remove pre-text and after-text empty spaces
       $line = trim($line);
-      //exchange tabs for whitespaces 
+      //change tab spaces for whitespaces 
       $line = preg_replace('/\t+/', ' ', $line);
       $line = preg_replace('/\s+/', ' ', $line);
       //split line to options and values
       $pieces = explode(" ", $line, 2);
+      //get rid of meaningless splits
+      if (count($pieces)<2) { continue; };
       $option = trim($pieces[0]);
       $value = trim($pieces[1]);
       //remove comments from this line
@@ -47,20 +49,23 @@ unset($i);
 
 #hosts definition
 foreach ($data as $host) {
-  $nagios_host_name = $host["host_name"];
-  $hostname = trim($host["host_name"]);
-  $hostname = str_replace('-','_',$hostname); 
-  $hostname = str_replace('.','_',$hostname);
-  $hostname = str_replace('/','_',$hostname);
-  $hostname = str_replace('(','_',$hostname);
-  $hostname = str_replace(')','_',$hostname);
-  $hostname = str_replace(' ','_',$hostname);
+  if (!empty($host["host_name"])) {
+    $nagios_host_name = $host["host_name"];
+    $hostname = trim($host["host_name"]);
+    $hostname = str_replace('-','_',$hostname);
+    $hostname = str_replace('.','_',$hostname);
+    $hostname = str_replace('/','_',$hostname);
+    $hostname = str_replace('(','_',$hostname);
+    $hostname = str_replace(')','_',$hostname);
+    $hostname = str_replace(' ','_',$hostname);
+  }
   //if hostname is empty or hostname starts with exclamation mark, ignore this host
-  if (($hostname == '') OR (ereg("^\\!", $hostname)) ) {
+  if (empty($hostname) OR (ereg("^\\!", $hostname)) ) {
     continue;
   };
   $hostname = "x".$hostname."x";
   $host["host_name"] = $hostname;
+  
   foreach ($host as $option => $value) {
     if ($option == "parents") {
       $value = trim($value);
@@ -83,7 +88,7 @@ foreach ($data as $host) {
       $value = trim($value);
       $option = "latlng";
     };
-    if (($option != "latlng") && ($option != "nagios_host_name") && (ereg("-",$value))) {
+    if (($option != "latlng") && ($option != "nagios_host_name") && ($option != "parents") && (ereg("-",$value))) {
       $value = str_replace('-','_',$value);
       $value = str_replace('.','_',$value);
       $value = trim($value);
@@ -159,11 +164,12 @@ foreach ($hosts as $h) {
         "});"."\n\n");
     };
     //generate google maps info bubble
+    if (!isset($h["parents"])) { $h["parents"] = Array(); }; 
     $info = '<div class=\"bubble\"><b>'.$h["nagios_host_name"]."</b><br>Type: ".$h["use"]
          .'<br>Address:'.$h["address"]
          .'<br>Number of parents:'.count($h["parents"]).','
          .'<br>Host status: '.$s[$h["nagios_host_name"]]["hoststatus"]["last_hard_state"]
-         .'<br>Services status: '.$s[$h["nagios_host_name"]]["servicestatus"]["last_hard_state"]
+         //.'<br>Services status: '.$s[$h["nagios_host_name"]]["servicestatus"]["last_hard_state"]
          .'<br>Combined / NagMap status: '.$s[$h["nagios_host_name"]]['status'].' : '.$s[$h["nagios_host_name"]]['status_human']
          .'<br><a href=\"/nagios/cgi-bin/statusmap.cgi\?host='.$h["nagios_host_name"].'\">Nagios map page</a>'
          .'<br><a href=\"/nagios/cgi-bin/extinfo.cgi\?type=1\&host='.$h["nagios_host_name"].'\">Nagios host page</a>';
@@ -193,6 +199,7 @@ foreach ($hosts as $h) {
 //create (multiple) parent connection links
 $javascript .= "//generating links between hosts\n";
 foreach ($hosts as $h) {
+  if (!isset($h["parents"])) { $h["parents"] = Array(); };
   if (isset($h["latlng"]) AND (is_array($h["parents"]))) {
     foreach ($h["parents"] as $parent) {
       if (isset($hosts[$parent]["latlng"])) {
