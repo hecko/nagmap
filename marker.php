@@ -23,15 +23,13 @@ foreach ($raw_data as $file) {
   //remove blank spaces
   $line = trim($line);
   if ($line && !preg_match("/^;/", $line) && !preg_match("/^#/", $line)) {
-    if ((preg_match("/^define host{/", $line)) OR (preg_match("/^define host {/", $line))) {
+    //replace many spaces with just one (or tab to one space)
+    $line = preg_replace('/\s+/', ' ', $line);
+    $line = preg_replace('/\t+/', ' ', $line);
+    if ((preg_match("/^define host{/", $line)) OR (preg_match("/^define host {/", $line)) OR (preg_match("/^define hostextinfo {/", $line)) OR (preg_match("/^define hostextinfo{/", $line))) {
       //starting a new host definition
       $i++;
     } elseif (!preg_match("/}/",$line)) {
-      //remove pre-text and after-text empty spaces
-      $line = trim($line);
-      //change tab spaces for whitespaces 
-      $line = preg_replace('/\t+/', ' ', $line);
-      $line = preg_replace('/\s+/', ' ', $line);
       //split line to options and values
       $pieces = explode(" ", $line, 2);
       //get rid of meaningless splits
@@ -47,7 +45,7 @@ foreach ($raw_data as $file) {
 }
 unset($i);
 
-#hosts definition
+//hosts definition
 foreach ($data as $host) {
   if (!empty($host["host_name"])) {
     $nagios_host_name = $host["host_name"];
