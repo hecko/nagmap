@@ -71,8 +71,13 @@ include('./call.php');
         .'<span class="ok">ok:'.$stats['ok']
           ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['ok']))."%)</span><br>"
         .'<span class="problem">problem:'.($stats['warning']+$stats['critical']+$stats['unknown'])
-          ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['warning']+$stats['critical']+$stats['unknown']))."%)</span><hr noshade>"
-        .$sidebar['unknown'].$sidebar['critical'].$sidebar['warning'].$sidebar['ok'].'</div>';
+          ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['warning']+$stats['critical']+$stats['unknown']))."%)</span><hr noshade>";
+      foreach (array('critical','unknown','warning','ok') as $severity) { 
+        foreach ($sidebar[$severity] as $entry) {
+          echo $entry;
+        }
+      }
+      echo '</div>';
     } else {
       echo '<div id="map_canvas" style="width:100%; height:100%; float: left"></div>';
     }
@@ -85,6 +90,6 @@ include('./call.php');
 
 ?>
 
-<body>
+</body>
 </html>
 
