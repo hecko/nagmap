@@ -8,22 +8,22 @@ function nagmap_status() {
   while (!feof($fp)) {
     $line = trim(fgets($fp));
     //ignore all commented lines - hop to the next itteration
-    if (empty($line) OR ereg("^;", $line) OR ereg("^#", $line)) {
+    if (empty($line) OR preg_match("/^;/", $line) OR preg_match("/^#/", $line)) {
       continue;
     }
     //if end of definition, skip to next itteration
-    if (ereg("}",$line)) {
+    if (preg_match("/}/",$line)) {
       $type = "0";
       unset($host);
       continue;
     }
-    if (ereg("^hoststatus {", $line)) {
+    if (preg_match("/^hoststatus {/", $line)) {
       $type = "hoststatus";
     };
-    if (ereg("^servicestatus {", $line)) {
+    if (preg_match("/^servicestatus {/", $line)) {
       $type = "servicestatus";
     };
-    if(!ereg("}",$line) && ($type == "hoststatus" | $type == "servicestatus")) {
+    if(!preg_match("/}/",$line) && ($type == "hoststatus" | $type == "servicestatus")) {
       $line = trim($line);
       $pieces = explode("=", $line, 2);
       //do not bother with invalid data

@@ -22,11 +22,11 @@ foreach ($raw_data as $file) {
  foreach ($file as $line) {
   //remove blank spaces
   $line = trim($line);
-  if ($line && !ereg("^;", $line) && !ereg("^#", $line)) {
-    if ((ereg("^define host{", $line)) OR (ereg("^define host {", $line))) {
+  if ($line && !preg_match("/^;/", $line) && !preg_match("/^#/", $line)) {
+    if ((preg_match("/^define host{/", $line)) OR (preg_match("/^define host {/", $line))) {
       //starting a new host definition
       $i++;
-    } elseif (!ereg("}",$line)) {
+    } elseif (!preg_match("/}/",$line)) {
       //remove pre-text and after-text empty spaces
       $line = trim($line);
       //change tab spaces for whitespaces 
@@ -60,7 +60,7 @@ foreach ($data as $host) {
     $hostname = str_replace(' ','_',$hostname);
   }
   //if hostname is empty or hostname starts with exclamation mark, ignore this host
-  if (empty($hostname) OR (ereg("^\\!", $hostname)) ) {
+  if (empty($hostname) OR (preg_match("/^\\!/", $hostname)) ) {
     continue;
   };
   $hostname = "x".$hostname."x";
@@ -82,13 +82,13 @@ foreach ($data as $host) {
         $value[] = "x".$parent."x";
       }
     }
-    if (($option == "notes") && (ereg("latlng",$value))) { 
+    if (($option == "notes") && (preg_match("/latlng/",$value))) { 
       $value = explode(":",$value); 
       $value = $value[1];
       $value = trim($value);
       $option = "latlng";
     };
-    if (($option != "latlng") && ($option != "nagios_host_name") && ($option != "parents") && (ereg("-",$value))) {
+    if (($option != "latlng") && ($option != "nagios_host_name") && ($option != "parents") && (preg_match("/-/",$value))) {
       $value = str_replace('-','_',$value);
       $value = str_replace('.','_',$value);
       $value = trim($value);
