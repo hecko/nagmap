@@ -28,6 +28,11 @@ a.warning, a.warning:visited {
   color: orange; 
 }
 
+a:hover {
+  background: white;
+  font-weight: bold;
+}
+
 .problem, a.critical, a.critical:visited {
   text-decoration: none;
   color: red;

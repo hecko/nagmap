@@ -62,6 +62,10 @@ include('./call.php');
       </head>
       <body style="margin:0px; padding:0px;" onload="initialize()">';
     if ($nagmap_sidebar == '1') {
+      sort($sidebar['ok']);
+      sort($sidebar['warning']);
+      sort($sidebar['critical']);
+      sort($sidebar['unknown']);
       echo '<div id="map_canvas" style="width:90%; height:100%; float: left"></div>';
       echo '<div id="sidebar" class="sidebar" style="padding-left: 10px; background: black; height:100%; overflow:auto;">'
         .'<span class="ok">ok:'.$stats['ok']
