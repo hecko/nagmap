@@ -63,7 +63,12 @@ include('./call.php');
       <body style="margin:0px; padding:0px;" onload="initialize()">';
     if ($nagmap_sidebar == '1') {
       echo '<div id="map_canvas" style="width:90%; height:100%; float: left"></div>';
-      echo '<div id="sidebar" class="sidebar" style="padding-left: 10px; background: black; height:100%; overflow:auto;">'.$sidebar.'</div>';
+      echo '<div id="sidebar" class="sidebar" style="padding-left: 10px; background: black; height:100%; overflow:auto;">'
+        .'<span class="ok">ok:'.$stats['ok']
+          ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['ok']))."%)</span><br>"
+        .'<span class="problem">problem:'.($stats['warning']+$stats['critical']+$stats['unknown'])
+          ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['warning']+$stats['critical']+$stats['unknown']))."%)</span><hr noshade>"
+        .$sidebar['unknown'].$sidebar['critical'].$sidebar['warning'].$sidebar['ok'].'</div>';
     } else {
       echo '<div id="map_canvas" style="width:100%; height:100%; float: left"></div>';
     }

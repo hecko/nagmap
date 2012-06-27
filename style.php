@@ -5,6 +5,10 @@
   font-size: 10pt;
 }
 
+hr {
+  border:1;
+}
+
 h3 {
   font-family: arial;
 }
@@ -14,7 +18,7 @@ h3 {
   font-size: 10pt;
 }
 
-a.ok, a.ok:visited {
+.ok, a.ok, a.ok:visited {
   text-decoration: none;
   color: green;
 }
@@ -24,7 +28,7 @@ a.warning, a.warning:visited {
   color: orange; 
 }
 
-a.critical, a.critical:visited {
+.problem, a.critical, a.critical:visited {
   text-decoration: none;
   color: red;
 }

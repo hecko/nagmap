@@ -101,13 +101,11 @@ foreach ($data as $host) {
 
 $info_msg['hosts'] = $hosts;
 
-$sidebar = "";
+$sidebar = Array();
+$stats = Array();
 //put markers and bubbles
 foreach ($hosts as $h) {
   if ((isset($h["latlng"])) and (isset($h["host_name"]))) {
-    // list of hosts in legend
-    $sidebar .= '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$s[$h["nagios_host_name"]]['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
-
     // position the host to the map
     $javascript .= ("window.".$h["host_name"]."_pos = new google.maps.LatLng(".$h["latlng"].");\n");
 
@@ -121,6 +119,8 @@ foreach ($hosts as $h) {
 	"\n  zIndex: 1,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "\n  });"."\n\n");
+        $stats['ok']++;
+        $sidebar['ok'] .= '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$s[$h["nagios_host_name"]]['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
     // if host is in state OK
     } elseif ($s[$h["nagios_host_name"]]['status'] == 0) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -130,6 +130,8 @@ foreach ($hosts as $h) {
         "\n  zIndex: 2,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
+        $stats['ok']++;
+        $sidebar['ok'] .= '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$s[$h["nagios_host_name"]]['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
     // if host is in state WARNING 
     } elseif ($s[$h["nagios_host_name"]]['status'] == 1) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -139,6 +141,8 @@ foreach ($hosts as $h) {
         "\n  zIndex: 3,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
+        $stats['warning']++;
+        $sidebar['warning'] .= '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$s[$h["nagios_host_name"]]['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
     // if host is in state CRITICAL / UNREACHABLE
     } elseif ($s[$h["nagios_host_name"]]['status'] == 2) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -148,6 +152,8 @@ foreach ($hosts as $h) {
         "\n  zIndex: 4,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
+        $stats['critical']++;
+        $sidebar['critical'] .= '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$s[$h["nagios_host_name"]]['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
     // if host is in state UNKNOWN
     } elseif ($s[$h["nagios_host_name"]]['status'] == 3) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -157,6 +163,8 @@ foreach ($hosts as $h) {
         "\n  zIndex: 2,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
+        $stats['unknown']++;
+        $sidebar['unknown'] .= '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$s[$h["nagios_host_name"]]['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
     } else {
     // if host is in any other (unknown to nagmap) state
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
