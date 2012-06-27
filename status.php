@@ -46,15 +46,19 @@ function nagmap_status() {
         if (($data[$host]['hoststatus']['last_hard_state'] == 0) && ($data[$host]['servicestatus']['last_hard_state'] == 0)) {
           $data[$host]['status'] = 0;
           $data[$host]['status_human'] = 'OK';
+          $data[$host]['status_style'] = 'ok';
         } elseif (($data[$host]['hoststatus']['last_hard_state'] == 2) | ($data[$host]['servicestatus']['last_hard_state'] == 1)) {
           $data[$host]['status'] = 1;
           $data[$host]['status_human'] = 'WARNING / UNREACHABLE';
+          $data[$host]['status_style'] = 'warning';
         } elseif (($data[$host]['hoststatus']['last_hard_state'] == 1) | ($data[$host]['servicestatus']['last_hard_state'] == 2)) {
           $data[$host]['status'] = 2;
           $data[$host]['status_human'] = 'CRITICAL / DOWN';
+          $data[$host]['status_style'] = 'critical';
         } else {
           $data[$host]['status'] = 3;
-          $data[$host]['status_human'] = 'UNKNOWN - NagMap bug!';
+          $data[$host]['status_human'] = 'UNKNOWN - NagMap bug - please report to maco@blava.net !';
+          $data[$host]['status_style'] = 'critical';
         }
       } 
     }

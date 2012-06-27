@@ -15,6 +15,7 @@ include('./call.php');
     <?php include("style.php"); ?>
     <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
     <script type="text/javascript">
+
     //static code from index.pnp
     function initialize() {
       var myOptions = {
@@ -22,8 +23,9 @@ include('./call.php');
         center: new google.maps.LatLng(<?php echo ("$nagmap_map_centre"); ?>),
         mapTypeId: google.maps.MapTypeId.HYBRID
       };
-      var map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
-	
+      window.map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
+
+      //defining marker images
       var red_blank = new google.maps.MarkerImage(
         'http://www.google.com/mapfiles/marker.png', 
         new google.maps.Size(20,34), 
@@ -54,21 +56,26 @@ include('./call.php');
   include('marker.php');
   if ($javascript != "") { 
     echo $javascript; 
-    echo '};';
+    echo '};'; //end of initialize function
     echo '
       </script>
       </head>
-      <body style="margin:0px; padding:0px;" onload="initialize()">
-        <div id="map_canvas" style="width:100%; height:100%"></div>
-      </body>
-    ';
+      <body style="margin:0px; padding:0px;" onload="initialize()">';
+    if ($nagmap_sidebar == '1') {
+      echo '<div id="map_canvas" style="width:90%; height:100%; float: left"></div>';
+      echo '<div id="sidebar" class="sidebar" style="padding-left: 10px; background: black; height:100%; overflow:auto;">'.$sidebar.'</div>';
+    } else {
+      echo '<div id="map_canvas" style="width:100%; height:100%; float: left"></div>';
+    }
   } else {
-    echo '};';
+    
+    echo '};'; //end of initialize function
     echo '</script><head><body>';
-    echo "<br><h3>There is no data to display. You either did not set NagMap properly or there is a software bug. Please contact maco@blava.net for free assistance.</h3></body>";
+    echo "<br><h3>There is no data to display. You either did not set NagMap properly or there is a software bug. Please contact maco@blava.net for free assistance.</h3>";
   }
 
 ?>
 
+<body>
 </html>
 

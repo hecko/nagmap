@@ -1,7 +1,11 @@
+1.0 @ 27th of Hun 2012
+  marcel@blava.net
+    - sidebar implemented (thanks for inspisration from h3rman@gmail.com)
 0.12 @ 25th of Jun 2012
   marcel@blava.net
     - fixed code so there are no E_NOTICE messages from PHP in webserver logs if enabled (thanks for inspiration goes to mareczky.bela@gmail.com)
     - favicon added in a image of a small maps marker
+    - this version has never been officialy released
 0.11 @ 22nd of Jun 2012
   marcel@blava.net
     - added config-proofing for nagios object config files (thanks to fernando.henrique@nec.com.br)
