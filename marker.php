@@ -99,7 +99,7 @@ foreach ($data as $host) {
 
 $info_msg['hosts'] = $hosts;
 
-<<<<<<< HEAD
+//define variables
 $sidebar['ok'] = Array();
 $sidebar['critical'] = Array();
 $sidebar['warning'] = Array();
@@ -108,19 +108,7 @@ $stats['ok'] = 0;
 $stats['critical'] = 0;
 $stats['warning'] = 0;
 $stats['unknown'] = 0;
-=======
-//define variables;
-$sidebar['warning'] = Array();
-$sidebar['ok'] = Array();
-$sidebar['critical'] = Array();
-$sidebar['unknown'] = Array();
 
-$stats['warning'] = 0;
-$stats['ok'] = 0;
-$stats['critical'] = 0;
-$stats['unknown'] = 0;
-
->>>>>>> aecb026a6e0ca5bf7351c396b56e1775e0fda995
 //put markers and bubbles
 foreach ($hosts as $h) {
   if ((isset($h["latlng"])) and (isset($h["host_name"]))) {
