@@ -101,8 +101,17 @@ foreach ($data as $host) {
 
 $info_msg['hosts'] = $hosts;
 
-$sidebar = Array();
-$stats = Array();
+//define variables;
+$sidebar['warning'] = "";
+$sidebar['ok'] = "";
+$sidebar['critical'] = "";
+$sidebar['unknown'] = "";
+
+$stats['warning'] = 0;
+$stats['ok'] = 0;
+$stats['critical'] = 0;
+$stats['unknown'] = 0;
+
 //put markers and bubbles
 foreach ($hosts as $h) {
   if ((isset($h["latlng"])) and (isset($h["host_name"]))) {
