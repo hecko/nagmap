@@ -1,5 +1,7 @@
 <?php
 
+// This is a function listing all files with Nagios configuration files into an array
+// It reads nagios config file and parses out all directions for configuration directories or files
 function get_config_files() {
   include('config.php');
   $cfg_raw = file($nagios_cfg_file);

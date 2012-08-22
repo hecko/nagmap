@@ -1,17 +1,20 @@
 <?php
 
+// Read a NagMap configuration file
 include('nagios_cfg.php');
 
+// Get list of all files with Nagios configuration into an array
 $files = get_config_files();
 $info_msg["path_files_to_read"] = $files;
 
+// Read all Nagios configuration files into one huge array
 foreach ($files as $file) {
   $raw_data[$file] = file($file);
 }
 
 include("status.php");
 
-//define variables so the E_NOTICES do not show in webserver logs
+//pre-define variables so the E_NOTICES do not show in webserver logs
 $javascript = "";
 
 $s = nagmap_status();
@@ -99,7 +102,7 @@ foreach ($data as $host) {
 
 $info_msg['hosts'] = $hosts;
 
-//define variables
+//pre-define variables so we do not get warnings in webserver logs
 $sidebar['ok'] = Array();
 $sidebar['critical'] = Array();
 $sidebar['warning'] = Array();
@@ -109,7 +112,7 @@ $stats['critical'] = 0;
 $stats['warning'] = 0;
 $stats['unknown'] = 0;
 
-//put markers and bubbles
+//put markers and bubbles onto a map
 foreach ($hosts as $h) {
   if ((isset($h["latlng"])) and (isset($h["host_name"]))) {
     // position the host to the map
@@ -207,15 +210,18 @@ foreach ($hosts as $h) {
   };
 };
 
-//create (multiple) parent connection links
+//create (multiple) parent connection links between nodes/markers
 $javascript .= "//generating links between hosts\n";
 foreach ($hosts as $h) {
   if (!isset($h["parents"])) { $h["parents"] = Array(); };
   if (isset($h["latlng"]) AND (is_array($h["parents"]))) {
     foreach ($h["parents"] as $parent) {
       if (isset($hosts[$parent]["latlng"])) {
+        // default colors for links
         $stroke_color = "#ADDFFF";
+	// links in warning state
         if ($s[$h["nagios_host_name"]]['status'] == 1) { $stroke_color ='#ffff00'; }
+	//links in problem state
         if ($s[$h["nagios_host_name"]]['status'] == 2) { $stroke_color ='#ff0000'; }
 
         $javascript .= ("\nwindow.".$h["host_name"].'_to_'.$parent." = new google.maps.Polyline({\n".

@@ -51,7 +51,9 @@ include('./call.php');
         new google.maps.Size(20,34),
         new google.maps.Point(10,34));
 
-//generating dynamic code from here...
+// generating dynamic code from here... 
+// if the page ends here, there is something seriously wrong, please contact maco@blava.net for help
+
 <?php 
   include('marker.php');
   if ($javascript != "") { 
