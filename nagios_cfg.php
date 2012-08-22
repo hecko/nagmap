@@ -16,10 +16,10 @@ function get_config_files() {
     } elseif (preg_match("/^cfg_dir/i",$line)) {
       $dir = explode('=',$line,2);
       $dir[1] = trim($dir[1]);
-      $dir_handle = opendir($dir[1]);
-      while (false !== ($file = readdir($dir_handle))) {
-        if (preg_match("/.cfg$/i",$file)) {
-          $files[] = $dir[1].'/'.$file;
+      $dir_recursive = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir[1]));
+      foreach($dir_recursive as $file => $object){
+        if(preg_match("/.cfg$/i",$file)) {
+          $files[] = $file;
         }
       }
     }
