@@ -11,8 +11,8 @@ include('./call.php');
     <link rel="shortcut icon" href="favicon.ico" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<link rel=StyleSheet href="style.css" type="text/css" media=screen>
     <title>NagMap <?php echo $nagmap_version ?></title>
-    <?php include("style.php"); ?>
     <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
     <script type="text/javascript">
 
