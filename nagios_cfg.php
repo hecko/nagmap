@@ -28,7 +28,7 @@ function get_config_files() {
       }
     }
   }
-	echo "\n";
+	echo "// end of reading config file $nagios_cfg_file\n\n";
   $file_list = array_unique($files);
   return $file_list;
 }
