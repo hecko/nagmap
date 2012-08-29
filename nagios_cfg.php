@@ -14,6 +14,7 @@ function get_config_files() {
       $file = explode('=',$line,2);
       $file[1] = trim($file[1]);
       $files[] = $file[1];
+	echo "// including Nagios config file ".$file[1].", config reference $line\n";
       unset($file);
     } elseif (preg_match("/^cfg_dir/i",$line)) {
       $dir = explode('=',$line,2);
@@ -22,10 +23,12 @@ function get_config_files() {
       foreach($dir_recursive as $file => $object){
         if(preg_match("/.cfg$/i",$file)) {
           $files[] = $file;
+	echo "// including Nagios config file ".$file.", config reference ".$line."\n";
         }
       }
     }
   }
+	echo "\n";
   $file_list = array_unique($files);
   return $file_list;
 }
