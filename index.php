@@ -20,8 +20,8 @@ include('./call.php');
     function initialize() {
       var myOptions = {
         zoom: <?php echo ("$nagmap_map_zoom"); ?>, 
-        center: new google.maps.LatLng(<?php echo ("$nagmap_map_centre"); ?>),
-        mapTypeId: google.maps.MapTypeId.HYBRID
+        center: new google.maps.LatLng(<?php echo $nagmap_map_centre ?>),
+        mapTypeId: google.maps.MapTypeId.<?php echo $nagmap_map_type ?>
       };
       window.map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
 
