@@ -1,4 +1,4 @@
-1.0 @ 4th of July 2012
+1.0 @ 16th of Sept 2012
   marcel@blava.net
     - sidebar implemented (thanks for inspisration from h3rman@gmail.com)
     - got rid of ereg() and eregi() and moved all functions to preg_match() - (thanks for noticing goes to oleg@loco.com.ua)
