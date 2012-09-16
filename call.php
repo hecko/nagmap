@@ -1,6 +1,6 @@
 <?php
 
-#calls home
+#calls home to development server and asks for current version
 
 $call_handle = fopen("http://labs.shmu.org.uk/nagmap/call/?v=$nagmap_version","r");
 $current_version = fgets($call_handle);

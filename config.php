@@ -9,9 +9,9 @@ $nagios_status_dat_file = "/usr/local/nagios/var/status.dat";
 $nagmap_map_centre = '57.1633,-2.127';
 //default zoom level of the map
 $nagmap_map_zoom = 14;
-//show some additional links in the bubbles?
+//show some additional links in the bubbles? 1=yes, 0=no
 $nagmap_bubble_links = 1;
-//show sidebar with hosts and their statuses?
+//show sidebar with hosts and their statuses? 1=yes, 0=no
 $nagmap_sidebar = 1; 
 //which google maps type to use?
 $nagmap_map_type = 'SATELLITE'; //you can use any of these: ROADMAP or SATELLITE or HYBRID or TERRAIN
