@@ -1,7 +1,7 @@
 <?php
 
 // Read a NagMap configuration file
-include('nagios_cfg.php');
+include("functions.php");
 
 // Get list of all files with Nagios configuration into an array
 $files = get_config_files();
@@ -11,8 +11,6 @@ $info_msg["path_files_to_read"] = $files;
 foreach ($files as $file) {
   $raw_data[$file] = file($file);
 }
-
-include("status.php");
 
 //pre-define variables so the E_NOTICES do not show in webserver logs
 $javascript = "";

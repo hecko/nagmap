@@ -68,7 +68,7 @@ include('./call.php');
       sort($sidebar['warning']);
       sort($sidebar['critical']);
       sort($sidebar['unknown']);
-      echo '<div id="map_canvas" style="width:90%; height:100%; float: left"></div>';
+      echo '<div id="map_canvas" style="width:85%; height:100%; float: left"></div>';
       echo '<div id="sidebar" class="sidebar" style="padding-left: 10px; background: black; height:100%; overflow:auto;">'
         .'<span class="ok">ok:'.$stats['ok']
           ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['ok']))."%)</span><br>"
