@@ -45,11 +45,9 @@ function nagmap_status() {
       if (($option == "host_name")) {
         $host = $value;
       }
-      if (!isset($data[$host][$type][$option])) {
-        $data[$host][$type][$option] = "";
-      }
+      //get the worst service state for the host from all of its services
       if (!isset($data[$host]['servicestatus']['last_hard_state'])) {
-        $data[$host]['servicestatus']['last_hard_state'] = "";
+        $data[$host]['servicestatus']['last_hard_state'] = "0";
       }
       if ($option == "last_hard_state") {
         if ($value >= $data[$host][$type][$option]) {

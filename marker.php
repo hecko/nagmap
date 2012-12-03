@@ -97,10 +97,12 @@ foreach ($data as $host) {
   };
 };
 
+#print_r($s);
+
 //put markers and bubbles onto a map
 foreach ($hosts as $h) {
-  if ((isset($h["latlng"])) and (isset($h["host_name"]))) {
-    echo('//positioning host on the map: '.$h['host_name'].":".$h['latlng']."\n");
+  if ((isset($h["latlng"])) and (isset($h["host_name"])) and (isset($s[$h["nagios_host_name"]]['status']))) {
+    echo('//positioning host on the map: '.$h['host_name'].":".$h['latlng'].":".$s[$h["nagios_host_name"]]['status_human']."\n");
     // position the host to the map
     $javascript .= ("window.".$h["host_name"]."_pos = new google.maps.LatLng(".$h["latlng"].");\n");
 
