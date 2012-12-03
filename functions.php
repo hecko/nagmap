@@ -1,5 +1,17 @@
 <?php
 
+
+function safe_name($in) {
+  $out = trim($in);
+  $out = str_replace('-','_',$out);
+  $out = str_replace('.','_',$out);
+  $out = str_replace('/','_',$out);
+  $out = str_replace('(','_',$out);
+  $out = str_replace(')','_',$out);
+  $out = str_replace(' ','_',$out);
+  return $out;
+}
+
 function nagmap_status() {
   include('config.php');
   $fp = fopen($nagios_status_dat_file,"r");

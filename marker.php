@@ -1,7 +1,15 @@
 <?php
-
-// Read a NagMap configuration file
 include("functions.php");
+//pre-define variables so the E_NOTICES do not show in webserver logs
+$javascript = "";
+$sidebar['ok'] = Array();
+$sidebar['critical'] = Array();
+$sidebar['warning'] = Array();
+$sidebar['unknown'] = Array();
+$stats['ok'] = 0;
+$stats['critical'] = 0;
+$stats['warning'] = 0;
+$stats['unknown'] = 0;
 
 // Get list of all files with Nagios configuration into an array
 $files = get_config_files();
@@ -12,9 +20,6 @@ foreach ($files as $file) {
   $raw_data[$file] = file($file);
 }
 
-//pre-define variables so the E_NOTICES do not show in webserver logs
-$javascript = "";
-
 $s = nagmap_status();
 $info_msg['status'] = $s;
 
@@ -23,11 +28,16 @@ foreach ($raw_data as $file) {
  foreach ($file as $line) {
   //remove blank spaces
   $line = trim($line);
+  //remove comments from line
+  $line_tmp = explode(';',$line);
+  $line = $line_tmp[0];
+  unset($line_tmp);
+  // if this is not an empty line or a comment...
   if ($line && !preg_match("/^;/", $line) && !preg_match("/^#/", $line)) {
     //replace many spaces with just one (or tab to one space)
     $line = preg_replace('/\s+/', ' ', $line);
     $line = preg_replace('/\t+/', ' ', $line);
-    if ((preg_match("/^define host{/", $line)) OR (preg_match("/^define host {/", $line)) OR (preg_match("/^define hostextinfo {/", $line)) OR (preg_match("/^define hostextinfo{/", $line))) {
+    if ((preg_match("/define host{/", $line)) OR (preg_match("/define host {/", $line)) OR (preg_match("/define hostextinfo {/", $line)) OR (preg_match("/define hostextinfo{/", $line))) {
       //starting a new host definition
       $i++;
     } elseif (!preg_match("/}/",$line)) {
@@ -37,99 +47,66 @@ foreach ($raw_data as $file) {
       if (count($pieces)<2) { continue; };
       $option = trim($pieces[0]);
       $value = trim($pieces[1]);
-      //remove comments from this line
-      $value_comm = explode(';', $value);
-      $data[$i][$option] = $value_comm[0];
+      $data[$i][$option] = $value;
     }
   }
  }
 }
-unset($i);
 
-//hosts definition
+$i=-1;
+//hosts definition - we are only interested in hostname, parents and notes with position information
 foreach ($data as $host) {
-  if (!empty($host["host_name"])) {
-    $nagios_host_name = $host["host_name"];
-    $hostname = trim($host["host_name"]);
-    $hostname = str_replace('-','_',$hostname);
-    $hostname = str_replace('.','_',$hostname);
-    $hostname = str_replace('/','_',$hostname);
-    $hostname = str_replace('(','_',$hostname);
-    $hostname = str_replace(')','_',$hostname);
-    $hostname = str_replace(' ','_',$hostname);
-  }
-  //if hostname is empty or hostname starts with exclamation mark, ignore this host
-  if (empty($hostname) OR (preg_match("/^\\!/", $hostname)) ) {
+  $i++;
+  if ((!empty($host["host_name"])) && (!preg_match("/^\\!/", $host['host_name']))) {
+    $hostname = 'x'.safe_name($host["host_name"]).'x';
+    $hosts[$hostname]['host_name'] = $hostname;
+    $hosts[$hostname]['nagios_host_name'] = $host["host_name"];
+  } else {
+    unset($data[$i]);
     continue;
   };
-  $hostname = "x".$hostname."x";
-  $host["host_name"] = $hostname;
   
+  //echo('//getting data for host '.$hostname."\n");
+  //iterate for every option for the host
   foreach ($host as $option => $value) {
+    //get parents information
     if ($option == "parents") {
-      $value = trim($value);
-      $value = str_replace('-','_',$value);
-      $value = str_replace('.','_',$value);
-      $value = str_replace('/','_',$value);
-      $value = str_replace('(','_',$value);
-      $value = str_replace(')','_',$value);
       $parents = explode(',', $value); 
-      $value = array();
       foreach ($parents as $parent) {
-        $parent = trim($parent);
-        $parent = str_replace(' ','_',$parent);
-        $value[] = "x".$parent."x";
+        $parent = safe_name($parent);
+        $hosts[$hostname]['parents'][] = "x".$parent."x";
       }
+      continue;
     }
-    if (($option == "notes") && (preg_match("/latlng/",$value))) { 
-      $value = explode(":",$value); 
-      $value = $value[1];
-      $value = trim($value);
-      $option = "latlng";
+    //we are only interested in latlng values from notes
+    if ($option == "notes") {
+      if (preg_match("/latlng/",$value)) { 
+        $value = explode(":",$value); 
+        $hosts[$hostname]['latlng'] = trim($value[1]);
+        continue;
+      } else {
+        unset($data[$i]);
+        continue;
+      }
     };
-    if (($option != "latlng") && ($option != "nagios_host_name") && ($option != "parents") && (preg_match("/-/",$value))) {
-      $value = str_replace('-','_',$value);
-      $value = str_replace('.','_',$value);
-      $value = trim($value);
+    //another few information we are interested in
+    if (($option == "address")) {
+      $hosts[$hostname]['address'] = trim($value);
     };
-    $hosts[$hostname]["nagios_host_name"] = $nagios_host_name;
-    $hosts[$hostname][$option] = $value;
     unset($parent, $parents);
   };
 };
 
-$info_msg['hosts'] = $hosts;
-
-//pre-define variables so we do not get warnings in webserver logs
-$sidebar['ok'] = Array();
-$sidebar['critical'] = Array();
-$sidebar['warning'] = Array();
-$sidebar['unknown'] = Array();
-$stats['ok'] = 0;
-$stats['critical'] = 0;
-$stats['warning'] = 0;
-$stats['unknown'] = 0;
-
 //put markers and bubbles onto a map
 foreach ($hosts as $h) {
   if ((isset($h["latlng"])) and (isset($h["host_name"]))) {
+    echo('//positioning host on the map: '.$h['host_name'].":".$h['latlng']."\n");
     // position the host to the map
     $javascript .= ("window.".$h["host_name"]."_pos = new google.maps.LatLng(".$h["latlng"].");\n");
 
     // display different icons for the host (according to the status in nagios)
-    // if host is in state OK and it is a special type of host (for wifi hotspot networks)
-    if (($h["use"] == "wifi_hotspot") && ($s[$h["nagios_host_name"]]['status'] == 0)) {
-      $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
-        "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker_white.png',".
-        "\n".'  '."map: map,".
-	"\n  zIndex: 1,".
-        "\n  title: \"".$h["nagios_host_name"]."\"".
-        "\n  });"."\n\n");
-        $stats['ok']++;
-        $sidebar['ok'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$s[$h["nagios_host_name"]]['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
     // if host is in state OK
-    } elseif ($s[$h["nagios_host_name"]]['status'] == 0) {
+    if ($s[$h["nagios_host_name"]]['status'] == 0) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
         "\n  icon: 'http://www.google.com/mapfiles/marker_green.png',".

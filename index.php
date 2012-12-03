@@ -55,7 +55,9 @@ include('./call.php');
 // if the page ends here, there is something seriously wrong, please contact maco@blava.net for help
 
 <?php 
+  // print the body of the page here
   include('marker.php');
+
   if ($javascript != "") { 
     echo $javascript; 
     echo '};'; //end of initialize function

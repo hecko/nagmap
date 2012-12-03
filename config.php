@@ -16,8 +16,4 @@ $nagmap_sidebar = 1;
 //which google maps type to use?
 $nagmap_map_type = 'SATELLITE'; //you can use any of these: ROADMAP or SATELLITE or HYBRID or TERRAIN
 
-###do not edit below unless you know what you are doing
-###this is a special file, which is only available on a special installations of Moire WiFI controller system developed by the same folks who develop NagMap - give us a shout if you are in a phase of implementing municipal, or any other type of wifi network :) we might be at your help! maco@blava.net
-include("moire.php");
-
 ?>
