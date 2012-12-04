@@ -20,6 +20,14 @@ foreach ($files as $file) {
   $raw_data[$file] = file($file);
 }
 
+//print all raw data configuration for debig reference
+foreach ($raw_data as $file_name => $file) {
+  echo'//filename:'.$file_name."\n";
+  foreach ($file as $line) {
+    echo('//'.$line);
+  }
+}
+
 $s = nagmap_status();
 $info_msg['status'] = $s;
 
