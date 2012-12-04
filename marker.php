@@ -53,6 +53,10 @@ foreach ($raw_data as $file) {
  }
 }
 
+foreach ($data as $host) {
+  echo('//host in raw data:'.$host['host_name'].":\n");
+}
+
 $i=-1;
 //hosts definition - we are only interested in hostname, parents and notes with position information
 foreach ($data as $host) {
@@ -102,7 +106,7 @@ foreach ($data as $host) {
 //put markers and bubbles onto a map
 foreach ($hosts as $h) {
   if ((isset($h["latlng"])) and (isset($h["host_name"])) and (isset($s[$h["nagios_host_name"]]['status']))) {
-    echo('//positioning host on the map: '.$h['host_name'].":".$h['latlng'].":".$s[$h["nagios_host_name"]]['status_human']."\n");
+    echo('//positioning host on the map:'.$h['host_name'].":".$h['latlng'].":".$s[$h["nagios_host_name"]]['status_human'].":\n");
     // position the host to the map
     $javascript .= ("window.".$h["host_name"]."_pos = new google.maps.LatLng(".$h["latlng"].");\n");
 
@@ -163,12 +167,12 @@ foreach ($hosts as $h) {
     };
     //generate google maps info bubble
     if (!isset($h["parents"])) { $h["parents"] = Array(); }; 
-    $info = '<div class=\"bubble\"><b>'.$h["nagios_host_name"]."</b><br>Type: ".$h["use"]
+    $info = '<div class=\"bubble\"><b>'.$h["nagios_host_name"]."</b>"
          .'<br>Address:'.$h["address"]
-         .'<br>Number of parents:'.count($h["parents"]).','
-         .'<br>Host status: '.$s[$h["nagios_host_name"]]["hoststatus"]["last_hard_state"]
+         //.'<br>Number of parents:'.count($h["parents"]).','
+         //.'<br>Host status: '.$s[$h["nagios_host_name"]]["hoststatus"]["last_hard_state"]
          //.'<br>Services status: '.$s[$h["nagios_host_name"]]["servicestatus"]["last_hard_state"]
-         .'<br>Combined / NagMap status: '.$s[$h["nagios_host_name"]]['status'].' : '.$s[$h["nagios_host_name"]]['status_human']
+         .'<br>NagMap status: '.$s[$h["nagios_host_name"]]['status'].' : '.$s[$h["nagios_host_name"]]['status_human']
          .'<br><a href=\"/nagios/cgi-bin/statusmap.cgi\?host='.$h["nagios_host_name"].'\">Nagios map page</a>'
          .'<br><a href=\"/nagios/cgi-bin/extinfo.cgi\?type=1\&host='.$h["nagios_host_name"].'\">Nagios host page</a>';
     $links = '<br><a href=\"../cgi-bin/smokeping.cgi?target=LAN.'.$h["nagios_host_name"].'\">Smokeping statistics</a>'
@@ -184,7 +188,9 @@ foreach ($hosts as $h) {
       .$h["host_name"]."_mark_infowindow.open(map,".$h["host_name"]."_mark);\n
       });\n\n");
 
-  };
+  } else {
+    echo('//ignoring the following host:'.$h['host_name'].":".$h['latlng'].":".$s[$h["nagios_host_name"]]['status_human'].":\n");
+  }
 };
 
 //create (multiple) parent connection links between nodes/markers
