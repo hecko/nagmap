@@ -20,11 +20,13 @@ foreach ($files as $file) {
   $raw_data[$file] = file($file);
 }
 
-//print all raw data configuration for debig reference
-foreach ($raw_data as $file_name => $file) {
-  echo'//filename:'.$file_name."\n";
-  foreach ($file as $line) {
-    echo('//'.$line);
+//print all raw data configuration for debug reference
+if ($nagmap_debug) {
+  foreach ($raw_data as $file_name => $file) {
+    echo'//filename:'.$file_name."\n";
+    foreach ($file as $line) {
+      echo('//'.$line);
+    }
   }
 }
 
@@ -64,16 +66,18 @@ foreach ($raw_data as $file) {
       $value = trim($pieces[1]);
       $data[$i][$option] = $value;
     } else {
-      echo '//we are not in host definition ('.$in_definition.') or the line is corrupted: '.$line."\n";
+      if ($nagmap_debug) { echo('//we are not in host definition ('.$in_definition.') or the line is corrupted: '.$line."\n"); };
     }
   }
  }
 }
 
-foreach ($data as $host) {
-  echo("\n".'//host in raw data:'.$host['host_name']."\n");
-  foreach ($host as $key => $val) {
-    echo '//'.$key.':'.$val."\n";
+if ($nagmap_debug) {
+  foreach ($data as $host) {
+    echo("\n".'//host in raw data:'.$host['host_name']."\n");
+    foreach ($host as $key => $val) {
+      echo '//'.$key.':'.$val."\n";
+    }
   }
 }
 

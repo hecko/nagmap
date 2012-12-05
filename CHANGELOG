@@ -1,3 +1,8 @@
+1.1 @ 5th of December 2012
+  marcel@blava.net
+    - fixed configuration parsing - thanks to pozda@mfservis.cz for helping to debug the code 
+    - added more verbose output (configuration parameter) for debugging purposes
+    - added check for .dat file path (thanks to github.com/ksidlar)
 1.0 @ 16th of Sept 2012
   marcel@blava.net
     - sidebar implemented (thanks for inspisration from h3rman@gmail.com)
