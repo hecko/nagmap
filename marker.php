@@ -41,14 +41,21 @@ foreach ($raw_data as $file) {
   $line = $line_tmp[0];
   unset($line_tmp);
   // if this is not an empty line or a comment...
-  if ($line && !preg_match("/^;/", $line) && !preg_match("/^#/", $line)) {
+  if ($line && !preg_match("/^;.?/", $line) && !preg_match("/^#.?/", $line)) {
     //replace many spaces with just one (or tab to one space)
     $line = preg_replace('/\s+/', ' ', $line);
     $line = preg_replace('/\t+/', ' ', $line);
-    if ((preg_match("/define host{/", $line)) OR (preg_match("/define host {/", $line)) OR (preg_match("/define hostextinfo {/", $line)) OR (preg_match("/define hostextinfo{/", $line))) {
+    if ((preg_match("/define host{.?/", $line)) OR (preg_match("/define host {.?/", $line)) OR (preg_match("/define hostextinfo {.?/", $line)) OR (preg_match("/define hostextinfo{.?/", $line))) {
       //starting a new host definition
+      if ($in_deinition) {
+        echo '//starting a new in_definition becore closing the previous one!'."\n";
+        die;
+      }
+      $in_definition = 1;
       $i++;
-    } elseif (!preg_match("/}/",$line)) {
+    } elseif (preg_match("/}/",$line)) {
+      $in_definition = 0;
+    } elseif ($in_definition) {
       //split line to options and values
       $pieces = explode(" ", $line, 2);
       //get rid of meaningless splits
@@ -56,20 +63,25 @@ foreach ($raw_data as $file) {
       $option = trim($pieces[0]);
       $value = trim($pieces[1]);
       $data[$i][$option] = $value;
+    } else {
+      echo '//we are not in host definition ('.$in_definition.') or the line is corrupted: '.$line."\n";
     }
   }
  }
 }
 
 foreach ($data as $host) {
-  echo('//host in raw data:'.$host['host_name'].":\n");
+  echo("\n".'//host in raw data:'.$host['host_name']."\n");
+  foreach ($host as $key => $val) {
+    echo '//'.$key.':'.$val."\n";
+  }
 }
 
 $i=-1;
 //hosts definition - we are only interested in hostname, parents and notes with position information
 foreach ($data as $host) {
   $i++;
-  if ((!empty($host["host_name"])) && (!preg_match("/^\\!/", $host['host_name']))) {
+  if (((!empty($host["host_name"])) && (!preg_match("/^\\!/", $host['host_name']))) | ($host['register'] == 0)) {
     $hostname = 'x'.safe_name($host["host_name"]).'x';
     $hosts[$hostname]['host_name'] = $hostname;
     $hosts[$hostname]['nagios_host_name'] = $host["host_name"];
