@@ -14,6 +14,10 @@ function safe_name($in) {
 
 function nagmap_status() {
   include('config.php');
+  if (file_exists($nagios_status_dat_file)) {
+    echo "</script>$nagios_status_dat_file does not exist! Please set the proper \$nagios_status_dat_file variable in NagMap config file!\n";
+    die;
+  }
   $fp = fopen($nagios_status_dat_file,"r");
   $type = "";
   $data = Array();
