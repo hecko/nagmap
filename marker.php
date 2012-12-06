@@ -11,11 +11,10 @@ $stats['critical'] = 0;
 $stats['warning'] = 0;
 $stats['unknown'] = 0;
 
-// Get list of all files with Nagios configuration into an array
+// Get list of all Nagios configuration files into an array
 $files = get_config_files();
-$info_msg["path_files_to_read"] = $files;
 
-// Read all Nagios configuration files into one huge array
+// Read content of all Nagios configuration files into one huge array
 foreach ($files as $file) {
   $raw_data[$file] = file($file);
 }
@@ -30,9 +29,6 @@ if ($nagmap_debug) {
   }
 }
 
-$s = nagmap_status();
-$info_msg['status'] = $s;
-
 $i=0; 
 foreach ($raw_data as $file) {
  foreach ($file as $line) {
@@ -44,13 +40,13 @@ foreach ($raw_data as $file) {
   unset($line_tmp);
   // if this is not an empty line or a comment...
   if ($line && !preg_match("/^;.?/", $line) && !preg_match("/^#.?/", $line)) {
-    //replace many spaces with just one (or tab to one space)
+    //replace many spaces with just one (or replace tab with one space)
     $line = preg_replace('/\s+/', ' ', $line);
     $line = preg_replace('/\t+/', ' ', $line);
-    if ((preg_match("/define host{.?/", $line)) OR (preg_match("/define host {.?/", $line)) OR (preg_match("/define hostextinfo {.?/", $line)) OR (preg_match("/define hostextinfo{.?/", $line))) {
+    if ((preg_match("/define host{/", $line)) OR (preg_match("/define host {/", $line)) OR (preg_match("/define hostextinfo {/", $line)) OR (preg_match("/define hostextinfo{/", $line))) {
       //starting a new host definition
       if ($in_deinition) {
-        echo '//starting a new in_definition becore closing the previous one!'."\n";
+        echo '//starting a new in_definition before closing the previous one! Exiting...'."\n";
         die;
       }
       $in_definition = 1;
@@ -61,7 +57,7 @@ foreach ($raw_data as $file) {
       //split line to options and values
       $pieces = explode(" ", $line, 2);
       //get rid of meaningless splits
-      if (count($pieces)<2) { continue; };
+      if (count($pieces)<2) { $error .= "\nconfig file line which contains only one column\n"; };
       $option = trim($pieces[0]);
       $value = trim($pieces[1]);
       $data[$i][$option] = $value;
@@ -72,6 +68,7 @@ foreach ($raw_data as $file) {
  }
 }
 
+//display all raw (unsorted) host data
 if ($nagmap_debug) {
   foreach ($data as $host) {
     echo("\n".'//host in raw data:'.$host['host_name']."\n");
@@ -81,55 +78,49 @@ if ($nagmap_debug) {
   }
 }
 
-$i=-1;
 //hosts definition - we are only interested in hostname, parents and notes with position information
 foreach ($data as $host) {
-  $i++;
   if (((!empty($host["host_name"])) && (!preg_match("/^\\!/", $host['host_name']))) | ($host['register'] == 0)) {
     $hostname = 'x'.safe_name($host["host_name"]).'x';
     $hosts[$hostname]['host_name'] = $hostname;
     $hosts[$hostname]['nagios_host_name'] = $host["host_name"];
+  
+    //iterate for every option for the host
+    foreach ($host as $option => $value) {
+      //get parents information
+      if ($option == "parents") {
+        $parents = explode(',', $value); 
+        foreach ($parents as $parent) {
+          $parent = safe_name($parent);
+          $hosts[$hostname]['parents'][] = "x".$parent."x";
+        }
+        continue;
+      }
+      //we are only interested in latlng values from notes
+      if ($option == "notes") {
+        if (preg_match("/latlng/",$value)) { 
+          $value = explode(":",$value); 
+          $hosts[$hostname]['latlng'] = trim($value[1]);
+          continue;
+        } else {
+          continue;
+        }
+      };
+      //another few information we are interested in
+      if (($option == "address")) {
+        $hosts[$hostname]['address'] = trim($value);
+      };
+      unset($parent, $parents);
+    };
   } else {
-    unset($data[$i]);
     continue;
   };
-  
-  //echo('//getting data for host '.$hostname."\n");
-  //iterate for every option for the host
-  foreach ($host as $option => $value) {
-    //get parents information
-    if ($option == "parents") {
-      $parents = explode(',', $value); 
-      foreach ($parents as $parent) {
-        $parent = safe_name($parent);
-        $hosts[$hostname]['parents'][] = "x".$parent."x";
-      }
-      continue;
-    }
-    //we are only interested in latlng values from notes
-    if ($option == "notes") {
-      if (preg_match("/latlng/",$value)) { 
-        $value = explode(":",$value); 
-        $hosts[$hostname]['latlng'] = trim($value[1]);
-        continue;
-      } else {
-        unset($data[$i]);
-        continue;
-      }
-    };
-    //another few information we are interested in
-    if (($option == "address")) {
-      $hosts[$hostname]['address'] = trim($value);
-    };
-    unset($parent, $parents);
-  };
 };
-
-#print_r($s);
-
-
-//remove hosts we are not able to render 
 unset($data);
+
+//get host statuses
+$s = nagmap_status();
+//remove hosts we are not able to render and combine those we are able to render with their statuses 
 foreach ($hosts as $h) {
   if ((isset($h["latlng"])) AND (isset($h["host_name"])) AND (isset($s[$h["nagios_host_name"]]['status']))) {
     $data[$h["host_name"]] = $h;
@@ -142,6 +133,8 @@ foreach ($hosts as $h) {
     }
   } 
 }
+unset($hosts);
+unset($s);
 
 //put markers and bubbles onto a map
 foreach ($data as $h) {
@@ -173,7 +166,7 @@ foreach ($data as $h) {
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
         $stats['warning']++;
-        $sidebar['warning'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$s[$h["nagios_host_name"]]['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
+        $sidebar['warning'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
     // if host is in state CRITICAL / UNREACHABLE
     } elseif ($h['status'] == 2) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -184,7 +177,7 @@ foreach ($data as $h) {
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
         $stats['critical']++;
-        $sidebar['critical'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$s[$h["nagios_host_name"]]['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
+        $sidebar['critical'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
     // if host is in state UNKNOWN
     } elseif ($h['status'] == 3) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -195,7 +188,7 @@ foreach ($data as $h) {
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
         $stats['unknown']++;
-        $sidebar['unknown'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$s[$h["nagios_host_name"]]['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
+        $sidebar['unknown'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
     } else {
     // if host is in any other (unknown to nagmap) state
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -211,8 +204,6 @@ foreach ($data as $h) {
     $info = '<div class=\"bubble\"><b>'.$h["nagios_host_name"]."</b>"
          .'<br>Address:'.$h["address"]
          .'<br>Number of parents:'.count($h["parents"]).','
-         //.'<br>Host status: '.$s[$h["nagios_host_name"]]["hoststatus"]["last_hard_state"]
-         //.'<br>Services status: '.$s[$h["nagios_host_name"]]["servicestatus"]["last_hard_state"]
          .'<br>NagMap status: '.$h['status'].' : '.$h['status_human']
          .'<br><a href=\"/nagios/cgi-bin/statusmap.cgi\?host='.$h["nagios_host_name"].'\">Nagios map page</a>'
          .'<br><a href=\"/nagios/cgi-bin/extinfo.cgi\?type=1\&host='.$h["nagios_host_name"].'\">Nagios host page</a>';
