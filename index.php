@@ -5,6 +5,10 @@ header("Refresh: $sec; url=$page");
 $nagmap_version = '1.1';
 include('./config.php');
 include('./call.php');
+
+
+//get all data to display this page here:
+include('marker.php');
 ?>
 <html>
   <head>
@@ -56,8 +60,6 @@ include('./call.php');
 
 <?php 
   // print the body of the page here
-  include('marker.php');
-
   if ($javascript != "") { 
     echo $javascript; 
     echo '};'; //end of initialize function
