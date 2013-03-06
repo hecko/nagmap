@@ -1,3 +1,6 @@
+1.2 @ 6th of March 2013
+  - fixed safe name parsing in functions.php - comma is now being replaced with an underscore (thanks for noticing goes to marlluslustosa@gmail.com)
+  - added alias host information to sidebar - thanks for inspiration goes to shirleylevron@gmail.com 
 1.1 @ 5th of December 2012
   marcel@blava.net
     - fixed configuration parsing - thanks to pozda@mfservis.cz for helping to debug the code 

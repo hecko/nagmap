@@ -45,7 +45,7 @@ foreach ($raw_data as $file) {
     $line = preg_replace('/\t+/', ' ', $line);
     if ((preg_match("/define host{/", $line)) OR (preg_match("/define host {/", $line)) OR (preg_match("/define hostextinfo {/", $line)) OR (preg_match("/define hostextinfo{/", $line))) {
       //starting a new host definition
-      if ($in_deinition) {
+      if ($in_definition) {
         echo '//starting a new in_definition before closing the previous one! Exiting...'."\n";
         die;
       }

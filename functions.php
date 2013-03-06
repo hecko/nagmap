@@ -9,6 +9,7 @@ function safe_name($in) {
   $out = str_replace('(','_',$out);
   $out = str_replace(')','_',$out);
   $out = str_replace(' ','_',$out);
+  $out = str_replace(',','_',$out);
   return $out;
 }
 
