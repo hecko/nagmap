@@ -45,13 +45,8 @@ foreach ($raw_data as $file) {
     $line = preg_replace('/\t+/', ' ', $line);
     if ((preg_match("/define host{/", $line)) OR (preg_match("/define host {/", $line)) OR (preg_match("/define hostextinfo {/", $line)) OR (preg_match("/define hostextinfo{/", $line))) {
       //starting a new host definition
-<<<<<<< HEAD
       if ($in_deinition) {
         echo '//starting a new in_definition before closing the previous one! Exiting...'."\n";
-=======
-      if ($in_definition) {
-        echo '//starting a new in_definition before closing the previous one!'."\n";
->>>>>>> 721acf29f2469ab7cded4b512660563d91e868ca
         die;
       }
       $in_definition = 1;
@@ -89,6 +84,7 @@ foreach ($data as $host) {
     $hostname = 'x'.safe_name($host["host_name"]).'x';
     $hosts[$hostname]['host_name'] = $hostname;
     $hosts[$hostname]['nagios_host_name'] = $host["host_name"];
+    $hosts[$hostname]['alias'] = "<i>(".$host["alias"].")</i>";
   
     //iterate for every option for the host
     foreach ($host as $option => $value) {
@@ -160,7 +156,7 @@ foreach ($data as $h) {
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
         $stats['ok']++;
-        $sidebar['ok'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
+        $sidebar['ok'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]." ".$h["alias"]."</a><br>\n";
     // if host is in state WARNING 
     } elseif ($h['status'] == 1) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -171,7 +167,7 @@ foreach ($data as $h) {
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
         $stats['warning']++;
-        $sidebar['warning'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
+        $sidebar['warning'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]." ".$h["alias"]."</a><br>\n";
     // if host is in state CRITICAL / UNREACHABLE
     } elseif ($h['status'] == 2) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -182,7 +178,7 @@ foreach ($data as $h) {
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
         $stats['critical']++;
-        $sidebar['critical'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]."</a><br>\n";
+        $sidebar['critical'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]." ".$h["alias"]."</a><br>\n";
     // if host is in state UNKNOWN
     } elseif ($h['status'] == 3) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -207,6 +203,7 @@ foreach ($data as $h) {
     //generate google maps info bubble
     if (!isset($h["parents"])) { $h["parents"] = Array(); }; 
     $info = '<div class=\"bubble\"><b>'.$h["nagios_host_name"]."</b>"
+         .'<br>Host alias:'.$h["alias"]
          .'<br>Address:'.$h["address"]
          .'<br>Number of parents:'.count($h["parents"]).','
          .'<br>NagMap status: '.$h['status'].' : '.$h['status_human']
