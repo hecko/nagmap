@@ -28,3 +28,9 @@ include('./call.php');
 to
 # include('./call.php');
 The calling script will be completely disabled.
+
+Terms of use (this is required as the app uses Google Maps API):
+================================================================
+* By using this Maps API Implementation, your are agreeing to be bound by Google's Terms of Use
+* This app uses the Maps API(s) - Google privacy policy: http://www.google.com/privacy.html
+* Google Maps usage quotas: https://developers.google.com/maps/documentation/javascript/usage
