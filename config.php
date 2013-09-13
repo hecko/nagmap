@@ -15,6 +15,10 @@ $nagmap_bubble_links = 1;
 $nagmap_sidebar = 1; 
 //which google maps type to use?
 $nagmap_map_type = 'SATELLITE'; //you can use any of these: ROADMAP or SATELLITE or HYBRID or TERRAIN
+//pull from secure sources? 1=yes, 0=no
+$nagmap_secure_sources = 0;
+//should nagmap call home? 1=yes, 0=no
+$nagmap_call_home = 1;
 //use this only to generate extra information for support - this will add a lot of information into the rendered index file
 $nagmap_debug = 0;
 

@@ -1,4 +1,5 @@
 <?php
+include("config.php");
 include("functions.php");
 //pre-define variables so the E_NOTICES do not show in webserver logs
 $javascript = "";
@@ -10,6 +11,9 @@ $stats['ok'] = 0;
 $stats['critical'] = 0;
 $stats['warning'] = 0;
 $stats['unknown'] = 0;
+
+$link_protocol = 'http';
+if ($nagmap_secure_sources) $link_protocol = 'https';
 
 // Get list of all Nagios configuration files into an array
 $files = get_config_files();
@@ -53,7 +57,7 @@ foreach ($raw_data as $file) {
       $i++;
     } elseif (preg_match("/}/",$line)) {
       $in_definition = 0;
-    } elseif ($in_definition) {
+    } elseif (@$in_definition) {
       //split line to options and values
       $pieces = explode(" ", $line, 2);
       //get rid of meaningless splits
@@ -80,11 +84,11 @@ if ($nagmap_debug) {
 
 //hosts definition - we are only interested in hostname, parents and notes with position information
 foreach ($data as $host) {
-  if (((!empty($host["host_name"])) && (!preg_match("/^\\!/", $host['host_name']))) | ($host['register'] == 0)) {
-    $hostname = 'x'.safe_name($host["host_name"]).'x';
+  if (((!empty($host["host_name"])) && (!preg_match("/^\\!/", $host['host_name']))) | (@$host['register'] == 0)) {
+    $hostname = 'x'.safe_name(@$host["host_name"]).'x';
     $hosts[$hostname]['host_name'] = $hostname;
-    $hosts[$hostname]['nagios_host_name'] = $host["host_name"];
-    $hosts[$hostname]['alias'] = "<i>(".$host["alias"].")</i>";
+    $hosts[$hostname]['nagios_host_name'] = @$host["host_name"];
+    $hosts[$hostname]['alias'] = "<i>(".@$host["alias"].")</i>";
   
     //iterate for every option for the host
     foreach ($host as $option => $value) {
@@ -150,7 +154,7 @@ foreach ($data as $h) {
     if ($h['status'] == 0) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker_green.png',".
+        "\n  icon: '".$link_protocol."://www.google.com/mapfiles/marker_green.png',".
         "\n  map: map,".
         "\n  zIndex: 2,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
@@ -161,7 +165,7 @@ foreach ($data as $h) {
     } elseif ($h['status'] == 1) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker_yellow.png',".
+        "\n  icon: '".$link_protocol."://www.google.com/mapfiles/marker_yellow.png',".
         "\n  map: map,".
         "\n  zIndex: 3,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
@@ -172,7 +176,7 @@ foreach ($data as $h) {
     } elseif ($h['status'] == 2) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker.png',".
+        "\n  icon: '".$link_protocol."://www.google.com/mapfiles/marker.png',".
         "\n  map: map,".
         "\n  zIndex: 4,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
@@ -183,7 +187,7 @@ foreach ($data as $h) {
     } elseif ($h['status'] == 3) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker_grey.png',".
+        "\n  icon: '".$link_protocol."://www.google.com/mapfiles/marker_grey.png',".
         "\n  map: map,".
         "\n  zIndex: 2,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
@@ -194,7 +198,7 @@ foreach ($data as $h) {
     // if host is in any other (unknown to nagmap) state
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker_grey.png',".
+        "\n  icon: '".$link_protocol."://www.google.com/mapfiles/marker_grey.png',".
         "\n  map: map,".
         "\n  zIndex: 6,".
         "\n  title: \"".$h["nagios_host_name"]."\"".

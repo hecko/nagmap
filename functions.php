@@ -55,7 +55,7 @@ function nagmap_status() {
         $data[$host]['servicestatus']['last_hard_state'] = "0";
       }
       if ($option == "last_hard_state") {
-        if ($value >= $data[$host][$type][$option]) {
+        if ($value >= @$data[$host][$type][$option]) {
           $data[$host][$type][$option] = $value;
         }
         if (($data[$host]['hoststatus']['last_hard_state'] == 0) && ($data[$host]['servicestatus']['last_hard_state'] == 0)) {
