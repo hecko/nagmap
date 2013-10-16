@@ -4,11 +4,15 @@ $sec = "300";
 header("Refresh: $sec; url=$page");
 $nagmap_version = '1.1';
 include('./config.php');
-include('./call.php');
 
+if ($nagmap_call_home) include('./call.php');
 
 //get all data to display this page here:
 include('marker.php');
+
+$link_protocol = 'http';
+if ($nagmap_secure_sources) $link_protocol = 'https';
+
 ?>
 <html>
   <head>
@@ -17,7 +21,7 @@ include('marker.php');
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<link rel=StyleSheet href="style.css" type="text/css" media=screen>
     <title>NagMap <?php echo $nagmap_version ?></title>
-    <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+    <script src="<?php echo $link_protocol ?>://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
     <script type="text/javascript">
 
     //static code from index.pnp
@@ -31,27 +35,27 @@ include('marker.php');
 
       //defining marker images
       var red_blank = new google.maps.MarkerImage(
-        'http://www.google.com/mapfiles/marker.png', 
+        '<?php echo $link_protocol ?>://www.google.com/mapfiles/marker.png', 
         new google.maps.Size(20,34), 
         new google.maps.Point(10,34));
 
       var blue_blank = new google.maps.MarkerImage(
-        'http://www.google.com/mapfiles/marker_white.png',
+        '<?php echo $link_protocol ?>://www.google.com/mapfiles/marker_white.png',
         new google.maps.Size(20,34),
         new google.maps.Point(10,34));
 
       var green_blank = new google.maps.MarkerImage(
-        'http://www.google.com/mapfiles/marker_green.png',
+        '<?php echo $link_protocol ?>://www.google.com/mapfiles/marker_green.png',
         new google.maps.Size(20,34),
         new google.maps.Point(10,34));
 
       var yellow_blank = new google.maps.MarkerImage(
-        'http://www.google.com/mapfiles/marker_yellow.png',
+        '<?php echo $link_protocol ?>://www.google.com/mapfiles/marker_yellow.png',
         new google.maps.Size(20,34),
         new google.maps.Point(10,34));
 
       var grey_blank = new google.maps.MarkerImage(
-        'http://www.google.com/mapfiles/marker_grey.png',
+        '<?php echo $link_protocol ?>://www.google.com/mapfiles/marker_grey.png',
         new google.maps.Size(20,34),
         new google.maps.Point(10,34));
 
@@ -98,4 +102,3 @@ include('marker.php');
 
 </body>
 </html>
-
