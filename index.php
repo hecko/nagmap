@@ -4,8 +4,6 @@ $sec = "300";
 header("Refresh: $sec; url=$page");
 $nagmap_version = '1.1';
 include('./config.php');
-include('./call.php');
-
 
 //get all data to display this page here:
 include('marker.php');
