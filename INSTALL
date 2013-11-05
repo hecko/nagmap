@@ -10,7 +10,7 @@ You can get the precise coordinates from Google Maps (http://maps.google.com) - 
 the spot where your device is located and select option "What's here?". The coordinates will be set 
 in maps search bar. 
 
-To draw connections, hosts need to have 'parents' field set up.
+To draw connections, hosts need to have 'parents' field set up in Nagios / Icinga.
 
 Apache / Nagmap setup
 =====================
@@ -25,8 +25,8 @@ This app is mostly tested on PHP version 5.2.4 on Ubuntu Linux.
 
 3) Open the website of nagmap installation (e.g. open Firefox - point to http://www.youwebserver.org/nagmap )
 
-When nothing works, open the source code of the website (Ctrl-U in Firefox) and send to maco@blava.net for support :) 
+When not working as expected, send the source code of the website (Ctrl-U in Firefox) to maco@blava.net for support :) 
 
 Support
 =======
-Free from maco@blava.net - please do not hesitate to send an email! I will respond to everyone!
+Free from maco@blava.net - please do not hesitate to send an email! I will eventualy respond to everyone!
