@@ -84,7 +84,7 @@ foreach ($data as $host) {
     $hostname = 'x'.safe_name($host["host_name"]).'x';
     $hosts[$hostname]['host_name'] = $hostname;
     $hosts[$hostname]['nagios_host_name'] = $host["host_name"];
-    $hosts[$hostname]['alias'] = "<i>(".$host["alias"].")</i>";
+    //$hosts[$hostname]['alias'] = "<i>(".$host["alias"].")</i>";//line return problem and empty variable
   
     //iterate for every option for the host
     foreach ($host as $option => $value) {
@@ -97,6 +97,8 @@ foreach ($data as $host) {
         }
         continue;
       }
+      //here new alias
+      if($option == "alias"){$hosts[$hostname]['alias'] = "<i>".$value."</i>";}
       //we are only interested in latlng values from notes
       if ($option == "notes") {
         if (preg_match("/latlng/",$value)) { 
