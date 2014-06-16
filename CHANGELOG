@@ -1,4 +1,5 @@
-1.3 @ <not_yet_released>
+1.3 @ 17th of Jun 2014 
+  - added filtering by hostgroup (requested by almirfiorio@gmail.com)
   - removed calling script from the codebase
   - removing single quote from alias name (thanks to cris@deana.it)
 1.2 @ 6th of March 2013
