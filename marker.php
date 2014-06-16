@@ -1,6 +1,6 @@
 <?php
 include("functions.php");
-//pre-define variables so the E_NOTICES do not show in webserver logs
+// pre-define variables so the E_NOTICES do not show in webserver logs
 $javascript = "";
 $sidebar['ok'] = Array();
 $sidebar['critical'] = Array();
@@ -19,66 +19,9 @@ foreach ($files as $file) {
   $raw_data[$file] = file($file);
 }
 
-//print all raw data configuration for debug reference
-if ($nagmap_debug) {
-  foreach ($raw_data as $file_name => $file) {
-    echo'//filename:'.$file_name."\n";
-    foreach ($file as $line) {
-      echo('//'.$line);
-    }
-  }
-}
+$data = filter_raw_data($raw_data);
 
-$i=0; 
-foreach ($raw_data as $file) {
- foreach ($file as $line) {
-  //remove blank spaces
-  $line = trim($line);
-  //remove comments from line
-  $line_tmp = explode(';',$line);
-  $line = $line_tmp[0];
-  unset($line_tmp);
-  // if this is not an empty line or a comment...
-  if ($line && !preg_match("/^;.?/", $line) && !preg_match("/^#.?/", $line)) {
-    //replace many spaces with just one (or replace tab with one space)
-    $line = preg_replace('/\s+/', ' ', $line);
-    $line = preg_replace('/\t+/', ' ', $line);
-    if ((preg_match("/define host{/", $line)) OR (preg_match("/define host {/", $line)) OR (preg_match("/define hostextinfo {/", $line)) OR (preg_match("/define hostextinfo{/", $line))) {
-      //starting a new host definition
-      if ($in_definition) {
-        echo '//starting a new in_definition before closing the previous one! Exiting...'."\n";
-        die;
-      }
-      $in_definition = 1;
-      $i++;
-    } elseif (preg_match("/}/",$line)) {
-      $in_definition = 0;
-    } elseif ($in_definition) {
-      //split line to options and values
-      $pieces = explode(" ", $line, 2);
-      //get rid of meaningless splits
-      if (count($pieces)<2) { $error .= "\nconfig file line which contains only one column\n"; };
-      $option = trim($pieces[0]);
-      $value = trim($pieces[1]);
-      $data[$i][$option] = $value;
-    } else {
-      if ($nagmap_debug) { echo('//we are not in host definition ('.$in_definition.') or the line is corrupted: '.$line."\n"); };
-    }
-  }
- }
-}
-
-//display all raw (unsorted) host data
-if ($nagmap_debug) {
-  foreach ($data as $host) {
-    echo("\n".'//host in raw data:'.$host['host_name']."\n");
-    foreach ($host as $key => $val) {
-      echo '//'.$key.':'.$val."\n";
-    }
-  }
-}
-
-//hosts definition - we are only interested in hostname, parents and notes with position information
+// hosts definition - we are only interested in hostname, parents and notes with position information
 foreach ($data as $host) {
   if (((!empty($host["host_name"])) && (!preg_match("/^\\!/", $host['host_name']))) | ($host['register'] == 0)) {
     $hostname = 'x'.safe_name($host["host_name"]).'x';
@@ -86,9 +29,9 @@ foreach ($data as $host) {
     $hosts[$hostname]['nagios_host_name'] = $host["host_name"];
     $hosts[$hostname]['alias'] = "<i>(".$host["alias"].")</i>";
   
-    //iterate for every option for the host
+    // iterate for every option for the host
     foreach ($host as $option => $value) {
-      //get parents information
+      // get parents information
       if ($option == "parents") {
         $parents = explode(',', $value); 
         foreach ($parents as $parent) {
@@ -97,7 +40,7 @@ foreach ($data as $host) {
         }
         continue;
       }
-      //we are only interested in latlng values from notes
+      // we are only interested in latlng values from notes
       if ($option == "notes") {
         if (preg_match("/latlng/",$value)) { 
           $value = explode(":",$value); 
@@ -107,21 +50,38 @@ foreach ($data as $host) {
           continue;
         }
       };
-      //another few information we are interested in
+      // another few information we are interested in
       if (($option == "address")) {
         $hosts[$hostname]['address'] = trim($value);
       };
+      if (($option == "hostgroups")) {
+        $hostgroups = explode(',', $value);
+        foreach ($hostgroups as $hostgroup) {
+          $hosts[$hostname]['hostgroups'][] = $hostgroup;
+        }
+      };
+      // another few information we are interested in - this is a user-defined nagios variable
+      if (preg_match("/^_/", trim($option))) {
+        print "option:".$option.'<br>';
+        $hosts[$hostname]['user'][] = $option.':'.$value;
+      };
       unset($parent, $parents);
-    };
-  } else {
-    continue;
-  };
-};
+    }
+  }
+}
 unset($data);
 
-//get host statuses
+if ($nagmap_filter_hostgroup) {
+  foreach ($hosts as $host) {
+    if (!in_array($nagmap_filter_hostgroup, $hosts[$host["host_name"]]['hostgroups'])) {
+      unset($hosts[$host["host_name"]]);
+    }
+  }
+}
+
+// get host statuses
 $s = nagmap_status();
-//remove hosts we are not able to render and combine those we are able to render with their statuses 
+// remove hosts we are not able to render and combine those we are able to render with their statuses 
 foreach ($hosts as $h) {
   if ((isset($h["latlng"])) AND (isset($h["host_name"])) AND (isset($s[$h["nagios_host_name"]]['status']))) {
     $data[$h["host_name"]] = $h;
@@ -130,19 +90,19 @@ foreach ($hosts as $h) {
     $data[$h["host_name"]]['status_style'] = $s[$h["nagios_host_name"]]['status_style'];
   } else {
     if ($nagmap_debug) { 
-      echo('//ignoring the following host:'.$h['host_name'].":".$h['latlng'].":".$s[$h["nagios_host_name"]]['status_human'].":\n");
+      echo('// ignoring the following host:'.$h['host_name'].":".$h['latlng'].":".$s[$h["nagios_host_name"]]['status_human'].":\n");
     }
   } 
 }
 unset($hosts);
 unset($s);
 
-//put markers and bubbles onto a map
+// put markers and bubbles onto a map
 foreach ($data as $h) {
     if ($nagmap_debug) {
-      echo('//positioning host on the map:'.$h['host_name'].":".$h['latlng'].":".$h['status_human'].":\n");
+      echo('<!--positioning host:'.$h['host_name'].":".$h['latlng'].":".$h['status'].":".$h['status_human']."-->\n");
     }
-    // position the host to the map
+    // position the host on the map
     $javascript .= ("window.".$h["host_name"]."_pos = new google.maps.LatLng(".$h["latlng"].");\n");
 
     // display different icons for the host (according to the status in nagios)
@@ -202,19 +162,16 @@ foreach ($data as $h) {
     };
     //generate google maps info bubble
     if (!isset($h["parents"])) { $h["parents"] = Array(); }; 
-    $info = '<div class=\"bubble\"><b>'.$h["nagios_host_name"]."</b>"
-         .'<br>Host alias:'.$h["alias"]
-         .'<br>Address:'.$h["address"]
-         .'<br>Number of parents:'.count($h["parents"]).','
-         .'<br>NagMap status: '.$h['status'].' : '.$h['status_human']
-         .'<br><a href=\"/nagios/cgi-bin/statusmap.cgi\?host='.$h["nagios_host_name"].'\">Nagios map page</a>'
-         .'<br><a href=\"/nagios/cgi-bin/extinfo.cgi\?type=1\&host='.$h["nagios_host_name"].'\">Nagios host page</a>';
-    $links = '<br><a href=\"../cgi-bin/smokeping.cgi?target=LAN.'.$h["nagios_host_name"].'\">Smokeping statistics</a>'
-         .'<br><a href=\"../devices/modules/mrtg_uptime/workdir/'.$h["nagios_host_name"].'.html\">Uptime Graph</a>';
-    if ($nagmap_bubble_links == 1) {
-      $info = $info.$links;
-    } 
-    $info = $info.'<br><span style=\"font-size: 7pt\">NagMap by blava.net</span></div>';
+    $info = '<div class=\"bubble\">'.$h["nagios_host_name"]."<br><table>"
+         .'<tr><td>alias</td><td>'.$h["alias"].'</td></tr>'
+         .'<tr><td>hostgroups</td><td>'.join('<br>', $h["hostgroups"]).'</td></tr>'
+         .'<tr><td>address</td><td>'.$h["address"].'</td></tr>'
+         .'<tr><td>other</td><td>'.join("<br>",$h['user']).'</td></tr>'
+         .'<tr><td>parents</td><td>'.join('<br>', $h["parents"]).'</td></tr>'
+         .'<tr><td>status</td><td>('.$h['status'].') '.$h['status_human'].'</td></tr>'
+         .'<tr><td colspan=2><a href=\"/nagios/cgi-bin/statusmap.cgi\?host='.$h["nagios_host_name"].'\">Nagios map page</a></td></tr>'
+         .'<tr><td colspan=2><a href=\"/nagios/cgi-bin/extinfo.cgi\?type=1\&host='.$h["nagios_host_name"].'\">Nagios host page</a></td></tr>'
+         .'</table>';
 
     $javascript .= ("window.".$h["host_name"]."_mark_infowindow = new google.maps.InfoWindow({ content: '$info'})\n");
 
@@ -223,30 +180,30 @@ foreach ($data as $h) {
       });\n\n");
 };
 
-//create (multiple) parent connection links between nodes/markers
-$javascript .= "//generating links between hosts\n";
+// create (multiple) parent connection links between nodes/markers
+$javascript .= "// generating links between hosts\n";
 foreach ($data as $h) {
-  //if we do not have any parents, just create an empty array
-  if (!isset($h["parents"])) { $h["parents"] = Array(); };
-  if (isset($h["latlng"]) AND (is_array($h["parents"]))) {
-    foreach ($h["parents"] as $parent) {
-      if (isset($data[$parent]["latlng"])) {
-        // default colors for links
-        $stroke_color = "#ADDFFF";
-	// links in warning state
-        if ($h['status'] == 1) { $stroke_color ='#ffff00'; }
-	//links in problem state
-        if ($h['status'] == 2) { $stroke_color ='#ff0000'; }
-	$javascript .= "\n";
-        $javascript .= ('window.'.$h["host_name"].'_to_'.$parent.' = new google.maps.Polyline({'."\n".
-          ' path: ['.$h["host_name"].'_pos,'.$parent.'_pos],'."\n".
-          "  strokeColor: \"$stroke_color\",\n".
-          "  strokeOpacity: 0.9,\n".
-          "  strokeWeight: 2});\n");
-        $javascript .= ($h["host_name"].'_to_'.$parent.".setMap(map);\n\n");
-      };
-    };
-  };
-};
+  // if we do not have any parents, just create an empty array
+  if (!isset($h["latlng"]) OR (!is_array($h["parents"]))) {
+    continue;
+  }
+  foreach ($h["parents"] as $parent) {
+    if (isset($data[$parent]["latlng"])) {
+      // default colors for links
+      $stroke_color = "#ADDFFF";
+      // links in warning state
+      if ($h['status'] == 1) { $stroke_color ='#ffff00'; }
+      // links in problem state
+      if ($h['status'] == 2) { $stroke_color ='#ff0000'; }
+      $javascript .= "\n";
+      $javascript .= ('window.'.$h["host_name"].'_to_'.$parent.' = new google.maps.Polyline({'."\n".
+        ' path: ['.$h["host_name"].'_pos,'.$parent.'_pos],'."\n".
+        "  strokeColor: \"$stroke_color\",\n".
+        "  strokeOpacity: 0.9,\n".
+        "  strokeWeight: 2});\n");
+      $javascript .= ($h["host_name"].'_to_'.$parent.".setMap(map);\n\n");
+    }
+  }
+}
 
 ?>

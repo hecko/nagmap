@@ -2,7 +2,7 @@
 $page = $_SERVER['PHP_SELF'];
 $sec = "300"; 
 header("Refresh: $sec; url=$page");
-$nagmap_version = '1.1';
+$nagmap_version = '1.2';
 include('./config.php');
 
 //get all data to display this page here:
@@ -53,47 +53,46 @@ include('marker.php');
         new google.maps.Size(20,34),
         new google.maps.Point(10,34));
 
-// generating dynamic code from here... 
+// generating dynamic code from here
 // if the page ends here, there is something seriously wrong, please contact maco@blava.net for help
 
 <?php 
   // print the body of the page here
-  if ($javascript != "") { 
-    echo $javascript; 
-    echo '};'; //end of initialize function
-    echo '
-      </script>
-      </head>
-      <body style="margin:0px; padding:0px;" onload="initialize()">';
-    if ($nagmap_sidebar == '1') {
-      sort($sidebar['ok']);
-      sort($sidebar['warning']);
-      sort($sidebar['critical']);
-      sort($sidebar['unknown']);
-      echo '<div id="map_canvas" style="width:85%; height:100%; float: left"></div>';
-      echo '<div id="sidebar" class="sidebar" style="padding-left: 10px; background: black; height:100%; overflow:auto;">'
-        .'<span class="ok">ok:'.$stats['ok']
-          ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['ok']))."%)</span><br>"
-        .'<span class="problem">problem:'.($stats['warning']+$stats['critical']+$stats['unknown'])
-          ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['warning']+$stats['critical']+$stats['unknown']))."%)</span><hr noshade>";
-      foreach (array('critical','unknown','warning','ok') as $severity) { 
-        foreach ($sidebar[$severity] as $entry) {
-          echo $entry;
-        }
-      }
-      echo '</div>';
-    } else {
-      echo '<div id="map_canvas" style="width:100%; height:100%; float: left"></div>';
-    }
-  } else {
-    
+  if ($javascript == "") {
     echo '};'; //end of initialize function
     echo '</script><head><body>';
-    echo "<br><h3>There is no data to display. You either did not set NagMap properly or there is a software bug. Please contact maco@blava.net for free assistance.</h3>";
+    echo "<br><h3>There is no data to display. You either did not set NagMap properly or there is a software bug.".
+         " Please contact maco@blava.net for free assistance.</h3>";
+    die("Cannot continue");
+  }
+  echo $javascript; 
+  echo '};'; //end of initialize function
+  echo '
+    </script>
+    </head>
+    <body style="margin:0px; padding:0px;" onload="initialize()">';
+  if ($nagmap_sidebar == '1') {
+    sort($sidebar['ok']);
+    sort($sidebar['warning']);
+    sort($sidebar['critical']);
+    sort($sidebar['unknown']);
+    echo '<div id="map_canvas" style="width:85%; height:100%; float: left"></div>';
+    echo '<div id="sidebar" class="sidebar" style="padding-left: 10px; background: black; height:100%; overflow:auto;">'
+      .'<span class="ok">ok:'.$stats['ok']
+        ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['ok']))."%)</span><br>"
+      .'<span class="problem">problem:'.($stats['warning']+$stats['critical']+$stats['unknown'])
+        ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['warning']+$stats['critical']+$stats['unknown']))."%)</span><hr noshade>";
+    foreach (array('critical','unknown','warning','ok') as $severity) { 
+      foreach ($sidebar[$severity] as $entry) {
+        echo $entry;
+      }
+    }
+    echo '</div>';
+  } else {
+    echo '<div id="map_canvas" style="width:100%; height:100%; float: left"></div>';
   }
 
 ?>
 
 </body>
 </html>
-

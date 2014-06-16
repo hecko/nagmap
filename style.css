@@ -3,6 +3,11 @@
   font-size: 10pt;
 }
 
+table, tr, td {
+  font-family: verdana;
+  font-size: 9pt;
+}
+
 hr {
   border:1;
 }

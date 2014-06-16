@@ -1,9 +1,54 @@
 <?php
 
+function filter_raw_data($raw_data) {
+  $i=0; 
+  foreach ($raw_data as $file) {
+    foreach ($file as $line) {
+      //remove blank spaces
+      $line = trim($line);
+      //remove comments from line
+      $line = explode(';',$line)[0];
+      // if this is not an empty line or a comment...
+      if ($line && !preg_match("/^;.?/", $line) && !preg_match("/^#.?/", $line)) {
+        //replace many spaces with just one (or replace tab with one space)
+        $line = preg_replace('/\s+/', ' ', $line);
+        $line = preg_replace('/\t+/', ' ', $line);
+        if (
+            (preg_match("/define host{/", $line)) OR 
+            (preg_match("/define host {/", $line)) OR 
+            (preg_match("/define hostextinfo {/", $line)) OR 
+            (preg_match("/define hostextinfo{/", $line)) OR
+            (preg_match("/define hostgroup {/", $line)) OR
+            (preg_match("/define hostgroup{/", $line))
+           ) {
+          //starting a new host definition
+          if ($in_definition) {
+            die("Starting a new in_definition before closing the previous one! That is not cool.");
+          }
+          $in_definition = 1;
+          $i++;
+        } elseif (preg_match("/}/",$line)) {
+          $in_definition = 0;
+        } elseif ($in_definition) {
+          //split line to options and values
+          $pieces = explode(" ", $line, 2);
+          //get rid of meaningless splits
+          if (count($pieces)<2) {
+            die("In-hose config file line (".$line.") which contains only one column. This is not right!");
+          };
+          $option = trim($pieces[0]);
+          $value = trim($pieces[1]);
+          $data[$i][$option] = $value;
+        }
+      }
+    }
+  }
+  return($data);
+}
 
 function safe_name($in) {
   $out = trim($in);
-  $out = mb_convert_encoding( $out, "ASCII");
+  $out = mb_convert_encoding($out, "ASCII");
   $out = str_replace('-','_',$out);
   $out = str_replace('.','_',$out);
   $out = str_replace('/','_',$out);
