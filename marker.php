@@ -92,7 +92,7 @@ foreach ($hosts as $h) {
     if ($nagmap_debug) { 
       echo('// ignoring the following host:'.$h['host_name'].":".$h['latlng'].":".$s[$h["nagios_host_name"]]['status_human'].":\n");
     }
-  } 
+  }
 }
 unset($hosts);
 unset($s);
@@ -117,7 +117,7 @@ foreach ($data as $h) {
         "});"."\n\n");
         $stats['ok']++;
         $sidebar['ok'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]." ".$h["alias"]."</a><br>\n";
-    // if host is in state WARNING 
+    // if host is in state WARNING
     } elseif ($h['status'] == 1) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".

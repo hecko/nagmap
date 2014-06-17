@@ -1,22 +1,22 @@
 <?php
 
 function filter_raw_data($raw_data) {
-  $i=0; 
+  $i=0;
   foreach ($raw_data as $file) {
     foreach ($file as $line) {
       //remove blank spaces
       $line = trim($line);
       //remove comments from line
-      $line = explode(';',$line)[0];
+      $line = array_shift(explode(';',$line));
       // if this is not an empty line or a comment...
       if ($line && !preg_match("/^;.?/", $line) && !preg_match("/^#.?/", $line)) {
         //replace many spaces with just one (or replace tab with one space)
         $line = preg_replace('/\s+/', ' ', $line);
         $line = preg_replace('/\t+/', ' ', $line);
         if (
-            (preg_match("/define host{/", $line)) OR 
-            (preg_match("/define host {/", $line)) OR 
-            (preg_match("/define hostextinfo {/", $line)) OR 
+            (preg_match("/define host{/", $line)) OR
+            (preg_match("/define host {/", $line)) OR
+            (preg_match("/define hostextinfo {/", $line)) OR
             (preg_match("/define hostextinfo{/", $line)) OR
             (preg_match("/define hostgroup {/", $line)) OR
             (preg_match("/define hostgroup{/", $line))
