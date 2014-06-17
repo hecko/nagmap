@@ -4,10 +4,15 @@ $page = $_SERVER['PHP_SELF'];
 $sec = "300";
 header("Refresh: $sec; url=$page");
 $nagmap_version = '1.2';
-include('./config.php');
-
-//get all data to display this page here:
+include('config.php');
 include('marker.php');
+
+if ($javascript == "") {
+  echo "There is no data to display. You either did not set NagMap properly or there is a software bug.<br>".
+       "Please contact maco@blava.net for free assistance.";
+  die("Cannot continue");
+}
+
 ?>
 <html>
   <head>
@@ -22,7 +27,7 @@ include('marker.php');
     //static code from index.pnp
     function initialize() {
       var myOptions = {
-        zoom: <?php echo ("$nagmap_map_zoom"); ?>, 
+        zoom: <?php echo ("$nagmap_map_zoom"); ?>,
         center: new google.maps.LatLng(<?php echo $nagmap_map_centre ?>),
         mapTypeId: google.maps.MapTypeId.<?php echo $nagmap_map_type ?>
       };
@@ -30,8 +35,8 @@ include('marker.php');
 
       //defining marker images
       var red_blank = new google.maps.MarkerImage(
-        'http://www.google.com/mapfiles/marker.png', 
-        new google.maps.Size(20,34), 
+        'http://www.google.com/mapfiles/marker.png',
+        new google.maps.Size(20,34),
         new google.maps.Point(10,34));
 
       var blue_blank = new google.maps.MarkerImage(
@@ -57,16 +62,9 @@ include('marker.php');
 // generating dynamic code from here
 // if the page ends here, there is something seriously wrong, please contact maco@blava.net for help
 
-<?php 
+<?php
   // print the body of the page here
-  if ($javascript == "") {
-    echo '};'; //end of initialize function
-    echo '</script><head><body>';
-    echo "<br><h3>There is no data to display. You either did not set NagMap properly or there is a software bug.".
-         " Please contact maco@blava.net for free assistance.</h3>";
-    die("Cannot continue");
-  }
-  echo $javascript; 
+  echo $javascript;
   echo '};'; //end of initialize function
   echo '
     </script>
@@ -83,7 +81,7 @@ include('marker.php');
         ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['ok']))."%)</span><br>"
       .'<span class="problem">problem:'.($stats['warning']+$stats['critical']+$stats['unknown'])
         ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['warning']+$stats['critical']+$stats['unknown']))."%)</span><hr noshade>";
-    foreach (array('critical','unknown','warning','ok') as $severity) { 
+    foreach (array('critical','unknown','warning','ok') as $severity) {
       foreach ($sidebar[$severity] as $entry) {
         echo $entry;
       }
