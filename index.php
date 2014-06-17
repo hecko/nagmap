@@ -1,6 +1,7 @@
 <?php
+error_reporting(E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR);
 $page = $_SERVER['PHP_SELF'];
-$sec = "300"; 
+$sec = "300";
 header("Refresh: $sec; url=$page");
 $nagmap_version = '1.2';
 include('./config.php');
