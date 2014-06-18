@@ -62,7 +62,6 @@ foreach ($data as $host) {
       };
       // another few information we are interested in - this is a user-defined nagios variable
       if (preg_match("/^_/", trim($option))) {
-        print "option:".$option.'<br>';
         $hosts[$hostname]['user'][] = $option.':'.$value;
       };
       unset($parent, $parents);
