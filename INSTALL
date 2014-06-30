@@ -24,7 +24,7 @@ yum install php-mbstring
 1) copy the nagmap directory into your Apache web folder
    (/var/www/ on Debian/Ubuntu, or /var/www/html/ on RedHat/CentOS)
 
-2) edit config.php file to fit your needs
+2) copy config.php.example into config.php and edit this file (config.php) to fit your needs
 
 3) Open the website of nagmap installation (e.g. open Firefox - point to http://www.youwebserver.org/nagmap )
 

@@ -172,6 +172,10 @@ foreach ($data as $h) {
          .'<tr><td colspan=2><a href=\"/nagios/cgi-bin/extinfo.cgi\?type=1\&host='.$h["nagios_host_name"].'\">Nagios host page</a></td></tr>'
          .'</table>';
 
+    if ($nagmap_bubble_extra) {
+        $info .= $nagmap_bubble_extra;
+    }
+
     $javascript .= ("window.".$h["host_name"]."_mark_infowindow = new google.maps.InfoWindow({ content: '$info'})\n");
 
     $javascript .= ("google.maps.event.addListener(".$h["host_name"]."_mark, 'click', function() {"
