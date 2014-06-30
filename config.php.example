@@ -25,4 +25,5 @@ $nagmap_map_type = 'SATELLITE'; //you can use any of these: ROADMAP or SATELLITE
 $nagmap_debug = 0;
 
 $nagmap_bubble_extra = '<a href="https://github.com/hecko/nagmap">NagMap on GitHub</a>';
+$nagmap_sidebar_top_extra = '<img src="logo.png"><br>';
 ?>

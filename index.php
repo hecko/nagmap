@@ -76,10 +76,13 @@ if ($javascript == "") {
     sort($sidebar['critical']);
     sort($sidebar['unknown']);
     echo '<div id="map_canvas" style="width:85%; height:100%; float: left"></div>';
-    echo '<div id="sidebar" class="sidebar" style="padding-left: 10px; background: black; height:100%; overflow:auto;">'
-      .'<span class="ok">ok:'.$stats['ok']
+    echo '<div id="sidebar" class="sidebar" style="padding-left: 10px; background: black; height:100%; overflow:auto;">';
+    if ($nagmap_sidebar_top_extra) {
+        echo $nagmap_sidebar_top_extra;
+    }
+    echo '<span class="ok">ok:'.$stats['ok']
         ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['ok']))."%)</span><br>"
-      .'<span class="problem">problem:'.($stats['warning']+$stats['critical']+$stats['unknown'])
+        .'<span class="problem">problem:'.($stats['warning']+$stats['critical']+$stats['unknown'])
         ." (".round((100/($stats['warning']+$stats['critical']+$stats['unknown']+$stats['ok']))*($stats['warning']+$stats['critical']+$stats['unknown']))."%)</span><hr noshade>";
     foreach (array('critical','unknown','warning','ok') as $severity) {
       foreach ($sidebar[$severity] as $entry) {
