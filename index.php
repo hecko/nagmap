@@ -3,7 +3,7 @@ error_reporting(E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECO
 $page = $_SERVER['PHP_SELF'];
 $sec = "300";
 header("Refresh: $sec; url=$page");
-$nagmap_version = '1.2';
+$nagmap_version = '1.3';
 include('config.php');
 include('marker.php');
 
