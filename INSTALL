@@ -15,8 +15,7 @@ To draw connections, hosts need to have 'parents' field set up in Nagios / Icing
 Apache / Nagmap setup
 =====================
 Your webserver (e.g. Apache) needs to have PHP support enabled!
-Please make sure your PHP is version 5.3 and above :) (see phpinfo() php function)
-This app is mostly tested on PHP version 5.3.6 on Ubuntu Linux.
+Please make sure your PHP is version 5.2.0 and above :) (see phpinfo() php function)
 
 On some distributions you might need to install mbstring for PHP - like Fedora / RedHat:
 yum install php-mbstring
