@@ -50,6 +50,18 @@ foreach ($data as $host) {
           continue;
         }
       };
+			if ($option == "_LAT") {
+				if ($nagmap_debug) { 
+					echo('// found user macro:'.$host["host_name"].":".$option."=".$value.":\n");
+				}
+				$hosts[$hostname]['lat'] = $value;
+			}
+			if ($option == "_LONG") {
+				if ($nagmap_debug) { 
+					echo('// found user macro:'.$host["host_name"].":".$option."=".$value.":\n");
+				}
+				$hosts[$hostname]['long'] = $value;
+			}
       // another few information we are interested in
       if (($option == "address")) {
         $hosts[$hostname]['address'] = trim($value);
@@ -66,6 +78,12 @@ foreach ($data as $host) {
       };
       unset($parent, $parents);
     }
+		if (preg_match("/\-?\d+\.\d+/", $hosts[$hostname]['lat']) && preg_match("/\-?\d+\.\d+/", $hosts[$hostname]['long'])) {
+			if ($nagmap_debug) { 
+				echo('// user macros are fine for coordinates:'.$host["host_name"].":".trim($hosts[$hostname]['lat']) . "," . trim($hosts[$hostname]['long']).":\n");
+			}
+			$hosts[$hostname]['latlng'] = trim($hosts[$hostname]['lat']) . "," . trim($hosts[$hostname]['long']);
+		}
   }
 }
 unset($data);
