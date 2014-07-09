@@ -4,6 +4,7 @@
 // they are usually placed in /usr/local/nagios/etc/nagios.cfg and /usr/local/nagios/var/status.dat
 $nagios_cfg_file = "/usr/local/nagios/etc/nagios.cfg";
 $nagios_status_dat_file = "/usr/local/nagios/var/status.dat";
+$nagios_cgi_baseurl = "/nagios/cgi-bin";
 
 // hostgroup filter - only show hosts from this hotgroup
 // leave empty for not filtering
