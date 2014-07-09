@@ -79,6 +79,9 @@ foreach ($data as $host) {
 					$hosts[$hostname]['lat'] = $value['LAT'];
 					$hosts[$hostname]['long'] = $value['LONG'];
 				}
+				foreach ($value as $uservar => $uservalue) {
+					$hosts[$hostname]['user'][] = $uservar.':'.$uservalue;
+				}
 			}
       // another few information we are interested in
       if (($option == "address")) {
