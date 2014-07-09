@@ -26,4 +26,15 @@ $nagmap_debug = 0;
 
 $nagmap_bubble_extra = '<a href="https://github.com/hecko/nagmap">NagMap on GitHub</a>';
 $nagmap_sidebar_top_extra = '<img src="logo.png"><br>';
+
+// set "TRUE" if you want to use livestatus instead of cfg and status.dat parsing.
+$nagmap_livestatus_enabled = FALSE;
+// the socket must be set, can be a local unix socket or also a tcp socket
+// "unix:/usr/local/nagios/var/rw/live"
+// "tcp:127.0.0.1:6557"
+// "tcp:localhost:6557"
+$nagmap_livestatus_socket = "unix:/usr/local/nagios/var/rw/live";
+// set "TRUE" if you use authentification (HTTP AuthBasic or similar) and want to limit the displayed hosts
+// (simply use the same htpasswd.users file as for nagios/icinga classic ui)
+$nagmap_livestatus_auth = FALSE;
 ?>

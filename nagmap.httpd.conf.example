@@ -1,0 +1,12 @@
+Alias /nagmap "/usr/local/nagmap"
+
+<Directory "/usr/local/nagmap">
+    Options None
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+    AuthName "Nagios Access"
+    AuthType Basic
+    AuthUserFile /usr/local/nagios/etc/htpasswd.users
+    Require valid-user
+</Directory>

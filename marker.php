@@ -1,5 +1,7 @@
 <?php
+include("config.php");
 include("functions.php");
+include("functions_livestatus.php");
 // pre-define variables so the E_NOTICES do not show in webserver logs
 $javascript = "";
 $sidebar['ok'] = Array();
@@ -10,7 +12,11 @@ $stats['ok'] = 0;
 $stats['critical'] = 0;
 $stats['warning'] = 0;
 $stats['unknown'] = 0;
-
+if ($nagmap_livestatus_enabled) {
+	$data = get_livestatus_raw_data();
+	$data2 = $data;
+}
+else {
 // Get list of all Nagios configuration files into an array
 $files = get_config_files();
 
@@ -20,7 +26,7 @@ foreach ($files as $file) {
 }
 
 $data = filter_raw_data($raw_data);
-
+}
 // hosts definition - we are only interested in hostname, parents and notes with position information
 foreach ($data as $host) {
   if (((!empty($host["host_name"])) && (!preg_match("/^\\!/", $host['host_name']))) | ($host['register'] == 0)) {
@@ -62,6 +68,18 @@ foreach ($data as $host) {
 				}
 				$hosts[$hostname]['long'] = $value;
 			}
+			if ($option == "custom_variables") {
+				if ($nagmap_debug) { 
+					echo('// found user macros:'.$host["host_name"].":".$option."=".$value.":\n");
+				}
+				if (isset($value['LAT'], $value['LONG'])) {
+					if ($nagmap_debug) { 
+						echo('// found custom variables from livestatus:'.$host["host_name"].":".$value['LAT'].",".$value['LONG'].":\n");
+					}
+					$hosts[$hostname]['lat'] = $value['LAT'];
+					$hosts[$hostname]['long'] = $value['LONG'];
+				}
+			}
       // another few information we are interested in
       if (($option == "address")) {
         $hosts[$hostname]['address'] = trim($value);
@@ -78,12 +96,14 @@ foreach ($data as $host) {
       };
       unset($parent, $parents);
     }
+	if (isset($hosts[$hostname]['lat'],$hosts[$hostname]['long'])) {
 		if (preg_match("/\-?\d+\.\d+/", $hosts[$hostname]['lat']) && preg_match("/\-?\d+\.\d+/", $hosts[$hostname]['long'])) {
 			if ($nagmap_debug) { 
 				echo('// user macros are fine for coordinates:'.$host["host_name"].":".trim($hosts[$hostname]['lat']) . "," . trim($hosts[$hostname]['long']).":\n");
 			}
 			$hosts[$hostname]['latlng'] = trim($hosts[$hostname]['lat']) . "," . trim($hosts[$hostname]['long']);
 		}
+	}
   }
 }
 unset($data);
@@ -97,7 +117,13 @@ if ($nagmap_filter_hostgroup) {
 }
 
 // get host statuses
-$s = nagmap_status();
+// no need to get the data again with livestatus
+if ($nagmap_livestatus_enabled) {
+	$s = $data2;
+}
+else {
+	$s = nagmap_status();
+}
 // remove hosts we are not able to render and combine those we are able to render with their statuses 
 foreach ($hosts as $h) {
   if ((isset($h["latlng"])) AND (isset($h["host_name"])) AND (isset($s[$h["nagios_host_name"]]['status']))) {
