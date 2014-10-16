@@ -147,18 +147,25 @@ function get_config_files() {
     } elseif (preg_match("/^cfg_dir/i",$line)) {
       $dir = explode('=',$line,2);
       $dir[1] = trim($dir[1]);
-      $dir_recursive = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir[1]));
-      foreach($dir_recursive as $file => $object){
-        if(preg_match("/.cfg$/i",$file)) {
-          $files[] = $file;
-        //echo "// including Nagios config file ".$file.", config reference ".$line."\n";
-        }
-      }
+      read_recursive_dir($files, $dir[1]);
     }
   }
   //echo "// end of reading config file $nagios_cfg_file\n\n";
   $file_list = array_unique($files);
   return $file_list;
+}
+
+//Function to read recursively a config directory which contains symlinks
+function read_recursive_dir(&$files, $dir){
+  $dir_recursive = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+  foreach ($dir_recursive as $file => $object) {
+    if(preg_match("/.cfg$/i",$file)) {
+      $files[] = $file;
+      //echo "// including Nagios config file ".$file.", config reference ".$line."\n";
+    } elseif (is_link($file) || (is_dir($file) && !preg_match("/\.$/i",$file)) ) {
+      read_recursive_dir($files, $file);
+    }
+  }
 }
 
 ?>
