@@ -162,7 +162,7 @@ function read_recursive_dir(&$files, $dir){
     if(preg_match("/.cfg$/i",$file)) {
       $files[] = $file;
       //echo "// including Nagios config file ".$file.", config reference ".$line."\n";
-    } elseif (is_link($file)) {
+    } elseif (is_link($file) || (is_dir($file) && !preg_match("/\.$/i",$file)) ) {
       read_recursive_dir($files, $file);
     }
   }
