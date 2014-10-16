@@ -6,6 +6,11 @@ The 'notes' field for host definition in Nagios needs to match the following exa
 If you are editing Nagios configuration files by hand this is how the FULL notes line should look like:
   notes       latlng: 66.174082,-13.119136
 
+You can now also use the custom variables "_LAT" and "_LONG" to provide the coordinates.
+Your host configuration should contain:
+  _LAT 66.174082
+  _LONG -13.119136
+
 You can get the precise coordinates from Google Maps (http://maps.google.com) - right click on 
 the spot where your device is located and select option "What's here?". The coordinates will be set 
 in maps search bar. 
@@ -28,6 +33,17 @@ yum install php-mbstring
 3) Open the website of nagmap installation (e.g. open Firefox - point to http://www.youwebserver.org/nagmap )
 
 When not working as expected, send the source code of the website (Ctrl-U in Firefox) to maco@blava.net for support :) 
+
+Livestatus-Backend Extension by Enfileyb
+========================================
+Currently this is optional! Livestatus is just another Backend.
+But as we do not need to parse the config files, the performance should be better and any variables, that are assigned with templates e.g. are automatically available.
+(Btw. you could also parse the objects.cache instead of the cfg files to get the values from templates!).
+
+If you are already running Livestatus, eg. for Thruk / NagVis / PNP4Nagios (if you use authentication) just enable it in config.php and change the socket according to your configuration.
+Otherwhise install Livestatus: http://mathias-kettner.de/checkmk_livestatus.html
+
+If you want to use authentication, either install NagMap into the ../share folder of Nagios/Icinga or into any other folder and configure your webserver (see nagmap.httpd.conf.example).
 
 Support
 =======
