@@ -5,6 +5,12 @@
 $nagios_cfg_file = "/usr/local/nagios/etc/nagios.cfg";
 $nagios_status_dat_file = "/usr/local/nagios/var/status.dat";
 
+// Base URL fragment for the Nagios CGI scripts as seen from the webserver serving this
+// nagmap installation. Usually this will be "/nagios/cgi-bin" or "/cgi-bin/nagios".
+// Consult the webserver configuration for details (e.g., for Apache look for ScriptAlias lines.)
+// No need to include the trailing slash.
+$nagios_cgi_url_base = "/nagios/cgi-bin";
+
 // hostgroup filter - only show hosts from this hotgroup
 // leave empty for not filtering
 $nagmap_filter_hostgroup  = '';
