@@ -161,6 +161,9 @@ foreach ($data as $h) {
     };
     //generate google maps info bubble
     if (!isset($h["parents"])) { $h["parents"] = Array(); }; 
+    if (!isset($nagios_cgi_url_base)) {
+        $nagios_cgi_url_base = '/nagios/cgi-bin'; // ensures we don't break old installations whose config.php doesn't contain this variable
+    }
     $info = '<div class=\"bubble\">'.$h["nagios_host_name"]."<br><table>"
          .'<tr><td>alias</td><td>'.$h["alias"].'</td></tr>'
          .'<tr><td>hostgroups</td><td>'.join('<br>', $h["hostgroups"]).'</td></tr>'
@@ -168,8 +171,8 @@ foreach ($data as $h) {
          .'<tr><td>other</td><td>'.join("<br>",$h['user']).'</td></tr>'
          .'<tr><td>parents</td><td>'.join('<br>', $h["parents"]).'</td></tr>'
          .'<tr><td>status</td><td>('.$h['status'].') '.$h['status_human'].'</td></tr>'
-         .'<tr><td colspan=2><a href=\"/nagios/cgi-bin/statusmap.cgi\?host='.$h["nagios_host_name"].'\">Nagios map page</a></td></tr>'
-         .'<tr><td colspan=2><a href=\"/nagios/cgi-bin/extinfo.cgi\?type=1\&host='.$h["nagios_host_name"].'\">Nagios host page</a></td></tr>'
+         .'<tr><td colspan=2><a href=\"'.$nagios_cgi_url_base.'/statusmap.cgi\?host='.$h["nagios_host_name"].'\">Nagios map page</a></td></tr>'
+         .'<tr><td colspan=2><a href=\"'.$nagios_cgi_url_base.'/extinfo.cgi\?type=1\&host='.$h["nagios_host_name"].'\">Nagios host page</a></td></tr>'
          .'</table>';
 
     if ($nagmap_bubble_extra) {
