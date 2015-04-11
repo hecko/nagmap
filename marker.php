@@ -109,7 +109,7 @@ foreach ($data as $h) {
     if ($h['status'] == 0) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker_green.png',".
+        "\n  icon: 'https://www.google.com/mapfiles/marker_green.png',".
         "\n  map: map,".
         "\n  zIndex: 2,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
@@ -120,7 +120,7 @@ foreach ($data as $h) {
     } elseif ($h['status'] == 1) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker_yellow.png',".
+        "\n  icon: 'https://www.google.com/mapfiles/marker_yellow.png',".
         "\n  map: map,".
         "\n  zIndex: 3,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
@@ -131,7 +131,7 @@ foreach ($data as $h) {
     } elseif ($h['status'] == 2) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker.png',".
+        "\n  icon: 'https://www.google.com/mapfiles/marker.png',".
         "\n  map: map,".
         "\n  zIndex: 4,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
@@ -142,7 +142,7 @@ foreach ($data as $h) {
     } elseif ($h['status'] == 3) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker_grey.png',".
+        "\n  icon: 'https://www.google.com/mapfiles/marker_grey.png',".
         "\n  map: map,".
         "\n  zIndex: 2,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
@@ -153,7 +153,7 @@ foreach ($data as $h) {
     // if host is in any other (unknown to nagmap) state
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
         "\n  position: ".$h["host_name"]."_pos,".
-        "\n  icon: 'http://www.google.com/mapfiles/marker_grey.png',".
+        "\n  icon: 'https://www.google.com/mapfiles/marker_grey.png',".
         "\n  map: map,".
         "\n  zIndex: 6,".
         "\n  title: \"".$h["nagios_host_name"]."\"".
