@@ -27,7 +27,11 @@ foreach ($data as $host) {
     $hostname = 'x'.safe_name($host["host_name"]).'x';
     $hosts[$hostname]['host_name'] = $hostname;
     $hosts[$hostname]['nagios_host_name'] = $host["host_name"];
-    $hosts[$hostname]['alias'] = "<i>(".$host["alias"].")</i>";
+    if (isset($host['alias']) && $host['alias'] != "") {
+      $hosts[$hostname]['alias'] = " <i>(".$host["alias"].")</i>";
+    } else {
+      $hosts[$hostname]['alias'] = "";
+    }
   
     // iterate for every option for the host
     foreach ($host as $option => $value) {
@@ -115,7 +119,7 @@ foreach ($data as $h) {
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
         $stats['ok']++;
-        $sidebar['ok'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]." ".$h["alias"]."</a><br>\n";
+        $sidebar['ok'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"].$h["alias"]."</a><br>\n";
     // if host is in state WARNING
     } elseif ($h['status'] == 1) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -126,7 +130,7 @@ foreach ($data as $h) {
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
         $stats['warning']++;
-        $sidebar['warning'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]." ".$h["alias"]."</a><br>\n";
+        $sidebar['warning'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"].$h["alias"]."</a><br>\n";
     // if host is in state CRITICAL / UNREACHABLE
     } elseif ($h['status'] == 2) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
@@ -137,7 +141,7 @@ foreach ($data as $h) {
         "\n  title: \"".$h["nagios_host_name"]."\"".
         "});"."\n\n");
         $stats['critical']++;
-        $sidebar['critical'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"]." ".$h["alias"]."</a><br>\n";
+        $sidebar['critical'][] = '<a href="javascript:'.$h["host_name"].'_mark_infowindow.open(map,'.$h["host_name"].'_mark)" class="'.$h['status_style'].'">'.$h["nagios_host_name"].$h["alias"]."</a><br>\n";
     // if host is in state UNKNOWN
     } elseif ($h['status'] == 3) {
       $javascript .= ('window.'.$h["host_name"]."_mark = new google.maps.Marker({".
